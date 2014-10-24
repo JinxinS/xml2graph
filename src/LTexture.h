@@ -15,8 +15,10 @@
 //Texture wrapper class
 class LTexture {
 public:
+	LTexture(const LTexture&);
+	LTexture& operator=(const LTexture&);
 	//Initializes variables
-	LTexture();
+	LTexture(SDL_Renderer* gRenderer,TTF_Font* gFont);
 
 	//Deallocates memory
 	~LTexture();
@@ -24,10 +26,10 @@ public:
 	//Loads image at specified path
 	bool loadFromFile( std::string path );
 
-	#ifdef _SDL_TTF_H
+#ifdef _SDL_TTF_H
 	//Creates image from font string
 	bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
-	#endif
+#endif
 
 	//Deallocates texture
 	void free();
@@ -55,6 +57,9 @@ private:
 	//Image dimensions
 	int mWidth;
 	int mHeight;
+
+	SDL_Renderer* gRenderer;
+	TTF_Font *gFont;
 };
 
 #endif /* LTEXTURE_H_ */

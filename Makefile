@@ -1,9 +1,12 @@
 SHELL = /bin/bash
 
+LSIDECONF_DIR 		:= #./lib/libsideconf
+LSIDECONF_HEADER_DIR := #./lib/libsideconf/include
+
 CPP_SRC_DIRS   := $(filter ./src/%, $(sort $(dir $(shell /usr/bin/find . -name '*.cpp' ))))
 CPP_HEADER_DIRS:= $(filter ./src/%, $(sort $(dir $(shell /usr/bin/find . -name '*.h'   ))))
 
-CPP_SRCS   := $(filter-out %main.cpp, $(wildcard  $(addsuffix *.cpp, $(CPP_SRC_DIRS))))
+CPP_SRCS   := $(wildcard  $(addsuffix *.cpp, $(CPP_SRC_DIRS)))
 CPP_HEADERS:= $(wildcard $(addsuffix *.h, $(CPP_HEADER_DIRS)))
 
 OUTPUT_DIR := build
@@ -21,13 +24,18 @@ CXX := g++
 CXXFLAGS := -g03 -std=c++0x -Weffc++ -Wall -Wextra -Wmissing-include-dirs -Wunused -Wuninitialized \
 -Woverloaded-virtual -Wredundant-decls -Winline -Wctor-dtor-privacy
 CXXDEFINES :=
-INCLUDES := $(addprefix -I, $(CPP_HEADER_DIRS))
+INCLUDES := $(addprefix -I, $(CPP_HEADER_DIRS)) $(addprefix -I, $(LSIDECONF_HEADER_DIR))
 SED := sed
 
-LIBS := -lSDL2 -lSDL2_ttf -lSDL2_image
+LDFLAGS := 
+LIBS_DIR := $(LSIDECONF_DIR)
+LIBS := -lSDL2 -lSDL2_ttf -lSDL2_image #-lsideconf
+ALL_LDFLAGS := $(LDFLAGS) $(addprefix -L, $(LIBS_DIR)) $(LIBS)
+
 
 vpath %.cpp 	$(CPP_SRC_DIRS)
 vpath %.h 		$(CPP_HEADER_DIRS)
+vpath %.a		$(LIBS_DIR)
 
 # All Target
 all: release-make  
@@ -46,7 +54,7 @@ $(BIN): $(OBJ_FILES) |$(BIN_DIR)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
 	@echo $(OBJ_FILES)
-	g++  -o $(BIN) $(OBJ_FILES) $(LIBS)
+	g++ -o $(BIN) $(OBJ_FILES) $(ALL_LDFLAGS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

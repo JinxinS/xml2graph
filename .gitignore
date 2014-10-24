@@ -41,3 +41,7 @@ Thumbs.db
 output
 build
 release
+Debug
+install
+input
+libsideconf
