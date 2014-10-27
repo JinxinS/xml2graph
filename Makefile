@@ -26,11 +26,11 @@ CXXFLAGS := -g03 -std=c++0x -Weffc++ -Wall -Wextra -Wmissing-include-dirs -Wunus
 CXXDEFINES :=
 INCLUDES := $(addprefix -I, $(CPP_HEADER_DIRS)) $(addprefix -I, $(LSIDECONF_HEADER_DIR))
 SED := sed
-
+SDL =`sdl2-config --libs`
 LDFLAGS := 
 LIBS_DIR := $(LSIDECONF_DIR)
 LIBS := -lSDL2 -lSDL2_ttf -lSDL2_image #-lsideconf
-ALL_LDFLAGS := $(LDFLAGS) $(addprefix -L, $(LIBS_DIR)) $(LIBS)
+ALL_LDFLAGS := $(LDFLAGS) $(addprefix -L, $(LIBS_DIR)) $(SDL) $(LIBS)
 
 
 vpath %.cpp 	$(CPP_SRC_DIRS)
@@ -44,7 +44,7 @@ release-make : $(RELEASE_HEADERS) $(RELEASE_BIN)
 
 $(RELEASE_HEADERS): $(RELEASE_DIR)/%.h : %.h
 $(RELEASE_HEADERS): | $(RELEASE_DIR)
-	cp $^ -t $(RELEASE_DIR)
+	cp $^ $(RELEASE_DIR)
 
 $(RELEASE_BIN):$(BIN) | $(RELEASE_DIR)
 	cp $< $@
