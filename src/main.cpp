@@ -9,6 +9,7 @@
 #include "LTexture.h"
 #include "SDLInstance.h"
 #include "XmlReader.h"
+#include "DatapathGraphInfo.h"
 
 char* parseArguments(int argc, const char* argv[] );
 void printUsage(const char *progName);
@@ -19,7 +20,10 @@ int main( int argc,const char* args[] )
 	SDLInstance sdlInstance;
 	XmlReader   xmlreader;
 	//Read xml files
-	xmlreader.read(fname);
+	DatapathGraphInfo* graphInfo = xmlreader.read(fname);
+	//levelize all elements
+	graphInfo->levelize();
+	//compute position
 
 	//Start up SDL and create window
 	if( !sdlInstance.init() )
