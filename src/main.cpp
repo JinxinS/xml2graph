@@ -23,15 +23,20 @@ int main( int argc,const char* args[] )
 	DatapathGraphInfo* graphInfo = xmlreader.read(fname);
 	//levelize all elements
 	graphInfo->levelize();
-	//compute position
+
 
 	//Start up SDL and create window
-	if( !sdlInstance.init() )
+	if( !sdlInstance.init(graphInfo->getName()) )
 	{
 		printf( "Failed to initialize!\n" );
 	}
 	else
 	{
+		/*compute position for all elements*/
+		graphInfo->compute(sdlInstance.getFont());
+
+
+		/*compute connection information  */
 		//Load media
 		if( !sdlInstance.loadMedia() )
 		{
@@ -39,7 +44,7 @@ int main( int argc,const char* args[] )
 		}
 		else
 		{
-			sdlInstance.draw();
+			sdlInstance.draw(graphInfo);
 		}
 	}
 	//Free resources and close SDL

@@ -25,8 +25,8 @@ void DatapathGElementOutput::registerInput(DatapathGElementInput* in){
 	destationInputs.insert(in);
 }
 
-void DatapathGElementOutput::levelize(int lvl){
+void DatapathGElementOutput::levelize(int lvl,std::map<int, std::list<DatapathGElement*> >& linfo){
 	for(std::set<DatapathGElementInput*>::const_iterator it = destationInputs.begin(); it!=destationInputs.end();++it){
-		(*it)->levelize(lvl);
+		(*it)->levelize(lvl,linfo);
 	}
 }

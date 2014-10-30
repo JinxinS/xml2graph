@@ -11,17 +11,19 @@
 #include <list>
 #include <map>
 #include <set>
+#include "xml2graphdef.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 class DatapathGElementInput;
 class DatapathGElementOutput;
-
-
 class DatapathGElement {
 	const char*  name;
 	const char*  function;
 	std::set<DatapathGElementInput*> inputs;
 	std::map<char,DatapathGElementOutput*> 	outputs;
 	int level;
-
+	SDL_Rect tx_pos;
+	SDL_Rect rect;
 private:
 	void addInPort(const char*);
 	void registerDestPort(DatapathGElementInput*i,const char*);
@@ -31,7 +33,13 @@ public:
 	DatapathGElement(const char* n,const char* f);
 	virtual ~DatapathGElement();
 	void connect(const char* i,DatapathGElement* s,const char*o );
-	void levelize(int);
+	void levelize(int,std::map<int, std::list<DatapathGElement*> >&);
+	void compute(const int x , const int y, const int w, const int h,TTF_Font *font);
+	inline const SDL_Rect& getOutlineRect() const { return rect;}
+	inline const SDL_Rect& getTextPosition() const { return tx_pos;}
+	inline const char* getName() const {return name;}
+	inline const char* getFuncName() const{return function;}
+
 };
 
 #endif /* DATAPATHGELEMENT_H_ */

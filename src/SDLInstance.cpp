@@ -15,12 +15,12 @@
 #include <cmath>
 #include "LTexture.h"
 #include "xml2graphdef.h"
-
+#include "DatapathGraphInfo.h"
 SDLInstance::SDLInstance()
 :gWindow(),
  gRenderer(),
  gFont(),
- gTextTexture(),
+ //gTextTexture(),
  gArrowTexture()
 {
 	// TODO Auto-generated constructor stub
@@ -31,7 +31,7 @@ SDLInstance::~SDLInstance() {
 	// TODO Auto-generated destructor stub
 }
 
-bool SDLInstance::init() {
+bool SDLInstance::init(const char* title) {
 	//Initialization flag
 	bool success = true;
 
@@ -50,7 +50,7 @@ bool SDLInstance::init() {
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -96,7 +96,7 @@ bool SDLInstance::init() {
 		}
 	}
 
-	gTextTexture 	= new LTexture(gRenderer,gFont);
+	//gTextTexture 	= new LTexture(gRenderer,gFont);
 	gArrowTexture   = new LTexture(gRenderer,gFont);
 
 	return success;
@@ -145,7 +145,7 @@ SDL_Texture* SDLInstance::loadTexture( std::string path )
 	return newTexture;
 }
 
-bool SDLInstance::draw(){
+bool SDLInstance::draw(DatapathGraphInfo* g){
 	//Main loop flag
 	bool quit = false;
 
@@ -155,9 +155,21 @@ bool SDLInstance::draw(){
 	//Set text color as black
 	SDL_Color textColor = { 0, 0, 0, 0xFF };
 
-	//The current input text.
-	std::string inputText = "SideWorks Functional Unit";
-	gTextTexture->loadFromRenderedText( inputText.c_str(), textColor );
+	//gTextTexture->loadFromRenderedText( inputText.c_str(), textColor );
+
+	//Get number of elements
+	int n_rects = g->getNumberOfElements();
+	//Create Shapes
+	SDL_Rect* outlineRects;
+	//Create Component Name Text
+	LTexture* gTextTexture[n_rects];
+	SDL_Rect gTextPosition[n_rects];
+
+	for(int i = 0 ; i< n_rects; ++i) gTextTexture[i]  =  new  LTexture(gRenderer,gFont);
+
+	g->getOutlineRects(&outlineRects);
+
+	g->getTextTexture(gTextTexture,gTextPosition,textColor);
 
 	//While application is running
 	while( !quit )
@@ -180,20 +192,24 @@ bool SDLInstance::draw(){
 		//				SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 		//				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
 		//				SDL_RenderFillRect( gRenderer, &fillRect );
-		gArrowTexture->render( 512, 512, NULL,90 );
-		gArrowTexture->render( 500, 512, NULL,180);
-		gArrowTexture->render( 480, 512, NULL,270);
-		gArrowTexture->render( 460, 512, NULL,360);
+
+		//Render Arrow
+//		gArrowTexture->render( 512, 512, NULL,90 );
+//		gArrowTexture->render( 500, 512, NULL,180);
+//		gArrowTexture->render( 480, 512, NULL,270);
+//		gArrowTexture->render( 460, 512, NULL,360);
 
 		//Render green outlined quad
-		SDL_Rect outlineRect = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 30, SCREEN_HEIGHT/ 30 };
-		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-		SDL_RenderDrawRect( gRenderer, &outlineRect );
+//		SDL_Rect outlineRect = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 30, SCREEN_HEIGHT/ 30 };
+//		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 
-		outlineRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH*6 / 30, SCREEN_HEIGHT/ 30 };
 		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-		SDL_RenderDrawRect( gRenderer, &outlineRect );
-		gArrowTexture->render( 0, 512 );
+		SDL_RenderDrawRects( gRenderer, outlineRects,n_rects );
+
+//		SDL_Rect outlineRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH*6 / 30, SCREEN_HEIGHT/ 30 };
+//		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+//		SDL_RenderDrawRect( gRenderer, &outlineRect );
+//		gArrowTexture->render( 0, 512 );
 
 		//				//Draw blue horizontal line
 		//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
@@ -207,7 +223,8 @@ bool SDLInstance::draw(){
 		//				}
 
 		//Render text textures
-		gTextTexture->render(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2);
+		for(int i = 0 ; i< n_rects; ++i)
+			gTextTexture[i]->render(gTextPosition[i].x, gTextPosition[i].y);
 
 		//Update screen
 		SDL_RenderPresent( gRenderer );
@@ -219,9 +236,9 @@ bool SDLInstance::draw(){
 void SDLInstance::close()
 {
 	//Free loaded images
-	delete gTextTexture;
+	//delete gTextTexture;
 	delete gArrowTexture;
-	gTextTexture  = NULL;
+	//gTextTexture  = NULL;
 	gArrowTexture = NULL;
 	//Free global font
 	TTF_CloseFont( gFont );

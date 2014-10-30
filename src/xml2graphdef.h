@@ -14,4 +14,24 @@ const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 
 
+struct position {
+	float x;
+	float y;
+} ;
+
+struct size{
+	float width;
+	float height;
+} ;
+
+struct txt_position{
+	float x;
+	float y;
+} ;
+
+struct dis_position{
+	float x;
+	float y;
+} ;
+
 #endif /* XML2GRAPHDEF_H_ */
