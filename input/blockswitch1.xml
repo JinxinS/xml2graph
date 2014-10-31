@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE LogicalSideWorks SYSTEM "http://applicationserver.coreworks.local/logical_sideworks.dtd">
+<LogicalSideWorks siw_name="cwda82_siw" kernel_name="" name="blockswitch1" simid="1" file="blockswitch1.rb" line="0">
+	<FUPlace fu_name="tempUnfilteredMem" place_label="3" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="memory1" place_label="4" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="outerLimit" place_label="0" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="innerLimit" place_label="1" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="hiPassCoeff0" place_label="2" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="hiPassCoeff1" place_label="3" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="iirState1Init" place_label="4" file="blockswitch1.rb" line="0"/>
+	<FUPlace fu_name="windowLen" place_label="5" file="blockswitch1.rb" line="0"/>
+	<FUFunction fu_name="offset" datapath="blockswitch1" type_name="OFFSET_12" func_name="F_OFFSET_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+	</FUFunction>
+	<FUFunction fu_name="tu_read" datapath="blockswitch1" type_name="TU_4_4_12" func_name="F_TIME">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="en" value="siw_ctrl.en"/>
+		<FunctionArg name="limit_k" value="waitForFeedback.out"/>
+		<FunctionArg name="limit_j" value="innerLimit.out"/>
+		<FunctionArg name="limit_i" value="outerLimit.out"/>
+		<FunctionArg name="limit_h" value="ZERO"/>
+		<FunctionArg name="dly" value="0"/>
+	</FUFunction>
+	<FUFunction fu_name="tu_write" datapath="blockswitch1" type_name="TU_4_4_12" func_name="F_TIME">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="en" value="siw_ctrl.en"/>
+		<FunctionArg name="limit_k" value="waitForFeedback.out"/>
+		<FunctionArg name="limit_j" value="innerLimit.out"/>
+		<FunctionArg name="limit_i" value="outerLimit.out"/>
+		<FunctionArg name="limit_h" value="ZERO"/>
+		<FunctionArg name="dly" value="8"/>
+	</FUFunction>
+	<FUFunction fu_name="tu_state" datapath="blockswitch1" type_name="TU_4_4_12" func_name="F_TIME">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="en" value="siw_ctrl.en"/>
+		<FunctionArg name="limit_k" value="waitForFeedback.out"/>
+		<FunctionArg name="limit_j" value="innerLimit.out"/>
+		<FunctionArg name="limit_i" value="outerLimit.out"/>
+		<FunctionArg name="limit_h" value="ZERO"/>
+		<FunctionArg name="dly" value="5"/>
+	</FUFunction>
+	<FUFunction fu_name="waitForFeedback" datapath="blockswitch1" type_name="CNST_12" func_name="F_CNST_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="value" value="5"/>
+	</FUFunction>
+	<FUFunction fu_name="indexOuterRdA" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="windowLen.out"/>
+		<FunctionArg name="en" value="tu_read.enable_I_"/>
+		<FunctionArg name="ld" value="tu_read.start_I_"/>
+		<FunctionArg name="ld_val" value="ZERO"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="0"/>
+	</FUFunction>
+	<FUFunction fu_name="indexInnerRdA" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="ONE"/>
+		<FunctionArg name="en" value="tu_read.enable_J_"/>
+		<FunctionArg name="ld" value="tu_read.start_J_"/>
+		<FunctionArg name="ld_val" value="indexOuterRdA.out"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="1"/>
+	</FUFunction>
+	<FUFunction fu_name="indexHoldRdA" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="ZERO"/>
+		<FunctionArg name="en" value="tu_read.enable_K_"/>
+		<FunctionArg name="ld" value="tu_read.start_K_"/>
+		<FunctionArg name="ld_val" value="indexInnerRdA.out"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="2"/>
+	</FUFunction>
+	<FUFunction fu_name="indexOuterRdB" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="windowLen.out"/>
+		<FunctionArg name="en" value="tu_read.enable_I_"/>
+		<FunctionArg name="ld" value="tu_read.start_I_"/>
+		<FunctionArg name="ld_val" value="ONE"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="0"/>
+	</FUFunction>
+	<FUFunction fu_name="indexInnerRdB" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="ONE"/>
+		<FunctionArg name="en" value="tu_read.enable_J_"/>
+		<FunctionArg name="ld" value="tu_read.start_J_"/>
+		<FunctionArg name="ld_val" value="indexOuterRdB.out"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="1"/>
+	</FUFunction>
+	<FUFunction fu_name="indexHoldRdB" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="ZERO"/>
+		<FunctionArg name="en" value="tu_read.enable_K_"/>
+		<FunctionArg name="ld" value="tu_read.start_K_"/>
+		<FunctionArg name="ld_val" value="indexInnerRdB.out"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="2"/>
+	</FUFunction>
+	<FUFunction fu_name="indexOuterWr" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="windowLen.out"/>
+		<FunctionArg name="en" value="tu_write.enable_I_"/>
+		<FunctionArg name="ld" value="tu_write.start_I_"/>
+		<FunctionArg name="ld_val" value="ONE"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="0"/>
+	</FUFunction>
+	<FUFunction fu_name="indexInnerWr" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="ONE"/>
+		<FunctionArg name="en" value="tu_write.enable_J_"/>
+		<FunctionArg name="ld" value="tu_write.start_J_"/>
+		<FunctionArg name="ld_val" value="indexOuterWr.out"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="1"/>
+	</FUFunction>
+	<FUFunction fu_name="indexHoldWr" datapath="blockswitch1" type_name="BAU_12" func_name="F_BAU_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="inc" value="ZERO"/>
+		<FunctionArg name="en" value="tu_write.enable_K_"/>
+		<FunctionArg name="ld" value="tu_write.start_K_"/>
+		<FunctionArg name="ld_val" value="indexInnerWr.out"/>
+		<FunctionArg name="cmp" value="undefined"/>
+		<FunctionArg name="dly" value="2"/>
+	</FUFunction>
+	<FUFunction fu_name="subCalcT1" datapath="blockswitch1" type_name="ALU_32" func_name="F_ADD_32">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="i0" value="tempUnfilteredMem.data_b"/>
+		<FunctionArg name="i1" value="tempUnfilteredMem.data_a"/>
+		<FunctionArg name="sub" value="ONE"/>
+		<FunctionArg name="shr" value="ZERO"/>
+		<FunctionArg name="shl" value="ZERO"/>
+		<FunctionArg name="dly" value="0"/>
+	</FUFunction>
+	<FUFunction fu_name="t1" datapath="blockswitch1" type_name="MUL_D4_32_64" func_name="F_MUL_DIV2_D4_32_64">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="i0" value="hiPassCoeff1.out"/>
+		<FunctionArg name="i1" value="subCalcT1.out"/>
+		<FunctionArg name="lohi" value="ZERO"/>
+	</FUFunction>
+	<FUFunction fu_name="temp_iirState1" datapath="blockswitch1" type_name="MUX2TO1_32" func_name="F_MUX2TO1_32">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="i0" value="iirState1Init.out"/>
+		<FunctionArg name="i1" value="tempFiltered.out"/>
+		<FunctionArg name="s0" value="tu_state.enable_K_"/>
+	</FUFunction>
+	<FUFunction fu_name="t2" datapath="blockswitch1" type_name="MUL_D4_32_64" func_name="F_MUL_DIV2_D4_32_64">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="i0" value="hiPassCoeff0.out"/>
+		<FunctionArg name="i1" value="temp_iirState1.out"/>
+		<FunctionArg name="lohi" value="ZERO"/>
+	</FUFunction>
+	<FUFunction fu_name="tempFiltered" datapath="blockswitch1" type_name="ALU_32" func_name="F_ADD_32">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="i0" value="t1.out"/>
+		<FunctionArg name="i1" value="t2.out"/>
+		<FunctionArg name="sub" value="ONE"/>
+		<FunctionArg name="shr" value="ZERO"/>
+		<FunctionArg name="shl" value="ONE"/>
+		<FunctionArg name="dly" value="0"/>
+	</FUFunction>
+	<FUFunction fu_name="outerLimit" datapath="blockswitch1" type_name="REG_12" func_name="F_REG_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="in" value="undefined"/>
+		<FunctionArg name="en" value="ZERO"/>
+		<State name="state" id="0"/>
+	</FUFunction>
+	<FUFunction fu_name="innerLimit" datapath="blockswitch1" type_name="REG_12" func_name="F_REG_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="in" value="undefined"/>
+		<FunctionArg name="en" value="ZERO"/>
+		<State name="state" id="1"/>
+	</FUFunction>
+	<FUFunction fu_name="hiPassCoeff0" datapath="blockswitch1" type_name="REG_32" func_name="F_REG_32">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="in" value="undefined"/>
+		<FunctionArg name="en" value="ZERO"/>
+		<State name="state" id="2"/>
+	</FUFunction>
+	<FUFunction fu_name="hiPassCoeff1" datapath="blockswitch1" type_name="REG_32" func_name="F_REG_32">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="in" value="undefined"/>
+		<FunctionArg name="en" value="ZERO"/>
+		<State name="state" id="3"/>
+	</FUFunction>
+	<FUFunction fu_name="iirState1Init" datapath="blockswitch1" type_name="REG_32" func_name="F_REG_32">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="in" value="undefined"/>
+		<FunctionArg name="en" value="ZERO"/>
+		<State name="state" id="4"/>
+	</FUFunction>
+	<FUFunction fu_name="windowLen" datapath="blockswitch1" type_name="REG_12" func_name="F_REG_12">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="in" value="undefined"/>
+		<FunctionArg name="en" value="ZERO"/>
+		<State name="state" id="5"/>
+	</FUFunction>
+	<FUMem fu_name="tempUnfilteredMem" datapath="blockswitch1" a_width="12" d_width="32" nwords="4096">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="data_in_a" value="undefined"/>
+		<FunctionArg name="address_a" value="indexHoldRdA.out"/>
+		<FunctionArg name="write_a" value="ZERO"/>
+		<FunctionArg name="dly_a" value="0"/>
+		<FunctionArg name="data_in_b" value="undefined"/>
+		<FunctionArg name="address_b" value="indexHoldRdB.out"/>
+		<FunctionArg name="write_b" value="ZERO"/>
+		<FunctionArg name="dly_b" value="0"/>
+	</FUMem>
+	<FUMem fu_name="memory1" datapath="blockswitch1" a_width="12" d_width="32" nwords="2048">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="data_in_a" value="tempFiltered.out"/>
+		<FunctionArg name="address_a" value="indexHoldWr.out"/>
+		<FunctionArg name="write_a" value="tu_write.start_K_"/>
+		<FunctionArg name="dly_a" value="3"/>
+		<FunctionArg name="data_in_b" value="undefined"/>
+		<FunctionArg name="address_b" value="undefined"/>
+		<FunctionArg name="write_b" value="ZERO"/>
+		<FunctionArg name="dly_b" value="0"/>
+	</FUMem>
+	<FUFunction fu_name="siw_ctrl" datapath="blockswitch1" type_name="SIW_CTRL" func_name="SIW_CTRL">
+		<DebugInfo file="blockswitch1.rb" line="0"/>
+		<FunctionArg name="done" value="tu_write.done"/>
+		<FunctionArg name="dly" value="3"/>
+	</FUFunction>
+</LogicalSideWorks>

@@ -30,3 +30,9 @@ void DatapathGElementInput::registerOutput(DatapathGElementOutput* o){
 void DatapathGElementInput::levelize(int lvl,std::map<int, std::list<DatapathGElement*> >& linfo){
 	parent->levelize(lvl,linfo);
 }
+
+void DatapathGElementInput::compute(const int x, const int y,const int w,const int h){
+	pos.p.x = x;
+	pos.p.y = y;
+	pos.angle = 90;
+}

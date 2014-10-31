@@ -33,8 +33,8 @@ DatapathGElement::~DatapathGElement() {
 	//for(auto i = inputs.begin(); i != inputs.end(); ++i) delete *(i->second);
 }
 
-void DatapathGElement::addInPort(const char* i){
-	inputs.insert(new DatapathGElementInput(i,this));
+void DatapathGElement::addInPort(DatapathGElementInput* i){
+	inputs.insert(i);
 }
 
 void DatapathGElement::registerDestPort(DatapathGElementInput* in,const char* o){
@@ -50,9 +50,9 @@ void DatapathGElement::registerDestPort(DatapathGElementInput* in,const char* o)
 	in->registerOutput(out);
 }
 
-void DatapathGElement::connect(const char* i,DatapathGElement* s,const char* o){
-	DatapathGElementInput* in = new DatapathGElementInput(i,this);
-	s->registerDestPort(in,o);
+void DatapathGElement::connect(DatapathGElementInput* i,DatapathGElement* s,const char* o){
+	this->addInPort(i);
+	s->registerDestPort(i,o);
 }
 
 void DatapathGElement::levelize(int lvl,std::map<int, std::list<DatapathGElement*> >& linfo){
@@ -67,17 +67,14 @@ void DatapathGElement::levelize(int lvl,std::map<int, std::list<DatapathGElement
 		std::list<DatapathGElement*>& llist = linfo.at(level);
 		llist.push_back(this);
 	}
-
-
-	printf("fu %s set to level %d \n",name,level);
-
+//	printf("fu %s set to level %d \n",name,level);
 	for(std::map<char,DatapathGElementOutput*>::const_iterator it = outputs.begin();it != outputs.end();++it){
 		DatapathGElementOutput* e = it->second;
 		e->levelize(lvl,linfo);
 	}
 }
 
-void DatapathGElement::compute(const int x, const int y,const int w,const int h,TTF_Font *font){
+int DatapathGElement::compute(const int x, const int y,const int w,const int h,TTF_Font *font){
 	int text_w, text_h;
 
 	rect.x = x;
@@ -90,6 +87,21 @@ void DatapathGElement::compute(const int x, const int y,const int w,const int h,
 	tx_pos.y = y + ((h - text_h)/2) ;
 	tx_pos.h = text_h;
 	tx_pos.w = text_w;
+
+	int delta = w / (inputs.size() + 1);
+	int i = 0;
+	for(auto in = inputs.begin(); in != inputs.end(); ++in,++i){
+		(*in)->compute(x + delta*(i+1), y, w, h);
+	}
+	return i ;
 }
 
+int  DatapathGElement::getArrowPositions(SDL_Arrow* arrow ,int idx){
+	int i = 0;
+	for(auto in = inputs.begin(); in != inputs.end(); ++in,++i){
+		arrow[idx + i] = (*in)->getArrowPosition();
+		//printf("arrow[%d] x %d y %d \n",arrow[idx+i],arrow[idx + i].p.x,arrow[idx + i].p.y);
+	}
+	return i;
+}
 

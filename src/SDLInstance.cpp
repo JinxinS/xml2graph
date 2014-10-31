@@ -155,23 +155,27 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 	//Set text color as black
 	SDL_Color textColor = { 0, 0, 0, 0xFF };
 
-	//gTextTexture->loadFromRenderedText( inputText.c_str(), textColor );
-
 	//Get number of elements
 	int n_rects = g->getNumberOfElements();
+
 	//Create Shapes
-	SDL_Rect* outlineRects;
+	SDL_Rect* outlineRects = new SDL_Rect[n_rects];
+	g->getOutlineRects(outlineRects);
+
 	//Create Component Name Text
 	LTexture* gTextTexture[n_rects];
 	SDL_Rect gTextPosition[n_rects];
-
 	for(int i = 0 ; i< n_rects; ++i) gTextTexture[i]  =  new  LTexture(gRenderer,gFont);
-
-	g->getOutlineRects(&outlineRects);
-
 	g->getTextTexture(gTextTexture,gTextPosition,textColor);
 
+	//Get number of Arrows and Create arrowTexture
+	int n_arrows = g->getNumberOfInputs();
+	SDL_Arrow* arrowRects  = new SDL_Arrow[n_arrows];
+	g->getArrowTexture(arrowRects);
+
+
 	//While application is running
+
 	while( !quit )
 	{
 		//Handle events on queue
@@ -189,10 +193,8 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 		SDL_RenderClear( gRenderer );
 
 		//Render Arrow
-		//		gArrowTexture->render( 512, 512, NULL,90 );
-		//		gArrowTexture->render( 500, 512, NULL,180);
-		//		gArrowTexture->render( 480, 512, NULL,270);
-		//		gArrowTexture->render( 460, 512, NULL,360);
+		for(int i = 0 ; i < n_arrows; ++i)
+				gArrowTexture->render( arrowRects[i].p.x, arrowRects[i].p.y, NULL,arrowRects[i].angle );
 
 		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 		SDL_RenderDrawRects( gRenderer, outlineRects,n_rects );
@@ -205,9 +207,12 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 		SDL_RenderPresent( gRenderer );
 	}
 
+	//free up
 	for(int i = 0 ; i< n_rects; ++i) delete gTextTexture[i];
     delete []outlineRects;
-	return quit;
+    delete []arrowRects;
+
+    return quit;
 }
 
 

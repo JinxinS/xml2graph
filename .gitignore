@@ -43,5 +43,4 @@ build
 release
 Debug
 install
-input
 libsideconf

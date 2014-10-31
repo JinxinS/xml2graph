@@ -7,7 +7,7 @@
 
 #ifndef XML2GRAPHDEF_H_
 #define XML2GRAPHDEF_H_
-
+#include <SDL2/SDL.h>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1024;
@@ -24,9 +24,9 @@ struct size{
 	float height;
 } ;
 
-struct txt_position{
-	float x;
-	float y;
+struct SDL_Arrow{
+	SDL_Point p;
+	double angle;
 } ;
 
 struct dis_position{

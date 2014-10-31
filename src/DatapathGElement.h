@@ -26,16 +26,17 @@ class DatapathGElement {
 	SDL_Rect tx_pos;
 	SDL_Rect rect;
 private:
-	void addInPort(const char*);
+	void addInPort(DatapathGElementInput* i);
 	void registerDestPort(DatapathGElementInput*i,const char*);
 public:
 	DatapathGElement(const DatapathGElement&);
 	DatapathGElement& operator=(const DatapathGElement&);
 	DatapathGElement(const char* n,const char* f);
 	virtual ~DatapathGElement();
-	void connect(const char* i,DatapathGElement* s,const char*o );
+	void connect(DatapathGElementInput* i,DatapathGElement* s,const char*o );
 	void levelize(int,std::map<int, std::list<DatapathGElement*> >&);
-	void compute(const int x , const int y, const int w, const int h,TTF_Font *font);
+	int compute(const int x , const int y, const int w, const int h,TTF_Font *font);
+	int  getArrowPositions(SDL_Arrow*,int);
 	inline const SDL_Rect& getOutlineRect() const { return rect;}
 	inline const SDL_Rect& getTextPosition() const { return tx_pos;}
 	inline const char* getName() const {return name;}

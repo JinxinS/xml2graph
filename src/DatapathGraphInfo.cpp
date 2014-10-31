@@ -12,8 +12,8 @@
 #include <string.h>
 DatapathGraphInfo::DatapathGraphInfo(const std::string& n)
 :name(n),
- element_size(),
- disp(),
+ n_inputs(),
+ inputset(),
  graphelements(),
  levelinfo()
 {
@@ -40,7 +40,8 @@ void DatapathGraphInfo::addPortToElement(const char* fname, const char* iname,co
 	const char* soname =  strtok (NULL,".");
 	if(soname!=NULL){
 		DatapathGElement* gSourceElement = graphelements.at(sfname);
-		gElement->connect(iname,gSourceElement,soname);
+		DatapathGElementInput* in = new DatapathGElementInput(iname,gElement);
+		gElement->connect(in,gSourceElement,soname);
 	}else{
 		/*input connect to undefiend or constant*/
 	}
@@ -56,41 +57,45 @@ void DatapathGraphInfo::compute(TTF_Font *gFont){
 	float max_l = levelinfo.size();									//max number of rows
 	float swratio = 0.5;												// space-width ratio
 	float shratio = 0.5;												// space-height ratio
+
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
 		if ( max_n < (float)(it->second).size())	max_n = (float)(it->second).size();
 	}
 
-
+	// width and height of the functional unit
 	float width  = SCREEN_WIDTH  /(max_n + (max_n+1)*swratio);
 	float height = SCREEN_HEIGHT /(max_l + (max_l+1)*shratio);
-	element_size = {width,height};
-	disp = { width*swratio,height*shratio };
-	position p = {disp.x,disp.y};
+
+	// displacement of the functional unit
+	float xDisp =  width*swratio;
+	float yDisp =  height*shratio;
+
+	//start position
+	position p = { xDisp, yDisp};
+
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
-		p.x = disp.x;
+		p.x = xDisp;
 		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr ){
 			DatapathGElement* e = (*itr);
-			e->compute(p.x,p.y,element_size.width,element_size.height,gFont);
-			p.x +=(disp.x+element_size.width);
+			n_inputs += e->compute(p.x,p.y,width,height,gFont);
+			p.x +=(xDisp + width);
 		}
-		p.y +=(disp.y+element_size.height);
+		p.y +=(yDisp + height);
 	}
 }
 
-int DatapathGraphInfo::getOutlineRects(SDL_Rect** rects){
+int DatapathGraphInfo::getOutlineRects(SDL_Rect* rects){
 	int i = 0;
-	*rects = new SDL_Rect[graphelements.size()];
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
 		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr, ++i ){
 			DatapathGElement* e = (*itr);
-			(*rects)[i] = (e->getOutlineRect());
+			rects[i] = (e->getOutlineRect());
 		}
 	}
 
 	return 1;
 }
 
-#include <sstream>
 int DatapathGraphInfo::getTextTexture(LTexture* gTextTexture[],SDL_Rect* gTextPosition,const SDL_Color& color){
 	int i = 0;
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
@@ -104,6 +109,18 @@ int DatapathGraphInfo::getTextTexture(LTexture* gTextTexture[],SDL_Rect* gTextPo
 	return 1;
 }
 
+
+int DatapathGraphInfo::getArrowTexture(SDL_Arrow* arrow){
+	int i = 0;
+	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
+		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr){
+			DatapathGElement* e = (*itr);
+			int idx = i;
+			i += e->getArrowPositions(arrow,idx);
+		}
+	}
+	return 1;
+}
 
 #include <iostream>
 void DatapathGraphInfo::printlevel(){
