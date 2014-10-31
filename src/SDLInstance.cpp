@@ -188,39 +188,14 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( gRenderer );
 
-		//Render red filled quad
-		//				SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-		//				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
-		//				SDL_RenderFillRect( gRenderer, &fillRect );
-
 		//Render Arrow
-//		gArrowTexture->render( 512, 512, NULL,90 );
-//		gArrowTexture->render( 500, 512, NULL,180);
-//		gArrowTexture->render( 480, 512, NULL,270);
-//		gArrowTexture->render( 460, 512, NULL,360);
-
-		//Render green outlined quad
-//		SDL_Rect outlineRect = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 30, SCREEN_HEIGHT/ 30 };
-//		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+		//		gArrowTexture->render( 512, 512, NULL,90 );
+		//		gArrowTexture->render( 500, 512, NULL,180);
+		//		gArrowTexture->render( 480, 512, NULL,270);
+		//		gArrowTexture->render( 460, 512, NULL,360);
 
 		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 		SDL_RenderDrawRects( gRenderer, outlineRects,n_rects );
-
-//		SDL_Rect outlineRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, SCREEN_WIDTH*6 / 30, SCREEN_HEIGHT/ 30 };
-//		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-//		SDL_RenderDrawRect( gRenderer, &outlineRect );
-//		gArrowTexture->render( 0, 512 );
-
-		//				//Draw blue horizontal line
-		//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-		//				SDL_RenderDrawLine( gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 );
-		//
-		//				//Draw vertical line of yellow dots
-		//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-		//				for( int i = 0; i < SCREEN_HEIGHT; i += 4 )
-		//				{
-		//					SDL_RenderDrawPoint( gRenderer, SCREEN_WIDTH / 2, i );
-		//				}
 
 		//Render text textures
 		for(int i = 0 ; i< n_rects; ++i)
@@ -229,6 +204,9 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 		//Update screen
 		SDL_RenderPresent( gRenderer );
 	}
+
+	for(int i = 0 ; i< n_rects; ++i) delete gTextTexture[i];
+    delete []outlineRects;
 	return quit;
 }
 
@@ -255,3 +233,24 @@ void SDLInstance::close()
 	IMG_Quit();
 	SDL_Quit();
 }
+
+
+/*usage example*/
+
+//Render red filled quad
+//SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+//SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
+//SDL_RenderFillRect( gRenderer, &fillRect );
+////Draw blue horizontal line
+//SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+//SDL_RenderDrawLine( gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 );
+//
+////Draw vertical line of yellow dots
+//SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+//for( int i = 0; i < SCREEN_HEIGHT; i += 4 )
+//{
+//	SDL_RenderDrawPoint( gRenderer, SCREEN_WIDTH / 2, i );
+//}
+////Render green outlined quad
+//SDL_Rect outlineRect = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 30, SCREEN_HEIGHT/ 30 };
+//SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );

@@ -19,6 +19,7 @@ class DatapathGElementOutput;
 class DatapathGElement {
 	const char*  name;
 	const char*  function;
+	char*  text;
 	std::set<DatapathGElementInput*> inputs;
 	std::map<char,DatapathGElementOutput*> 	outputs;
 	int level;
@@ -39,7 +40,7 @@ public:
 	inline const SDL_Rect& getTextPosition() const { return tx_pos;}
 	inline const char* getName() const {return name;}
 	inline const char* getFuncName() const{return function;}
-
+	inline const char* getText() const{return text;}
 };
 
 #endif /* DATAPATHGELEMENT_H_ */

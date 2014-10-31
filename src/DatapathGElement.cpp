@@ -10,17 +10,26 @@
 #include "DatapathGElementInput.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+
 DatapathGElement::DatapathGElement(const char* n,const char* f):
 	name(n),
 	function(f),
+	text(),
 	inputs(),
 	outputs(),
 	level(-1),
 	tx_pos({0,0,0,0}),
 	rect({0,0,0,0})
-{}
+{
+	text = (char*)malloc(strlen(name)+strlen(function) +3);
+	strcpy(text,name);
+	strcat(text,"[");
+	strcat(text,function);
+	strcat(text,"]");
+}
 
 DatapathGElement::~DatapathGElement() {
+	free(text);
 	//for(auto i = inputs.begin(); i != inputs.end(); ++i) delete *(i->second);
 }
 
@@ -69,18 +78,18 @@ void DatapathGElement::levelize(int lvl,std::map<int, std::list<DatapathGElement
 }
 
 void DatapathGElement::compute(const int x, const int y,const int w,const int h,TTF_Font *font){
+	int text_w, text_h;
+
 	rect.x = x;
 	rect.y = y;
 	rect.h = h;
 	rect.w = w;
 
-	int text_w, text_h;
-	TTF_SizeText(font,name,&text_w, &text_h);
-
-	tx_pos.x = x;
-	tx_pos.y = y;
-	tx_pos.h = h;
-	tx_pos.w = w;
+	TTF_SizeText(font,text,&text_w, &text_h);
+	tx_pos.x = x + ((w - text_w)/2) ;
+	tx_pos.y = y + ((h - text_h)/2) ;
+	tx_pos.h = text_h;
+	tx_pos.w = text_w;
 }
 
 

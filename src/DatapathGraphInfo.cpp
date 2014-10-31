@@ -90,13 +90,13 @@ int DatapathGraphInfo::getOutlineRects(SDL_Rect** rects){
 	return 1;
 }
 
-
+#include <sstream>
 int DatapathGraphInfo::getTextTexture(LTexture* gTextTexture[],SDL_Rect* gTextPosition,const SDL_Color& color){
 	int i = 0;
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
 		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr, ++i ){
 			DatapathGElement* e = (*itr);
-			gTextTexture[i]->loadFromRenderedText(e->getName(),color);
+			gTextTexture[i]->loadFromRenderedText(e->getText(),color);
 			gTextPosition[i] = (e->getTextPosition());
 		}
 	}
