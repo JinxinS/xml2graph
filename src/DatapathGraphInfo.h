@@ -17,10 +17,11 @@
 class LTexture;
 class DatapathGElement;
 class DatapathGElementInput;
+class DatapathGElementOutput;
 class DatapathGraphInfo {
 	std::string name;
-	int n_inputs;
 	std::set<DatapathGElementInput*> inputset;
+	std::set<DatapathGElementOutput*> outputset;
 	std::map<std::string, DatapathGElement*> graphelements;
 	std::map<int, std::list<DatapathGElement*> > levelinfo;
 private:
@@ -31,13 +32,15 @@ public:
 	void addElement(const char* fname,DatapathGElement* element);
 	void addPortToElement(const char* fname, const char* iname,const char* oname);
 	void levelize();
-	void compute(TTF_Font *gFont);
+	void compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arrowTexture);
 	void printlevel();
     int getOutlineRects(SDL_Rect*);
     int getTextTexture(LTexture* gTextTexture[],SDL_Rect* gTextPosition,const SDL_Color& color);
-    int getArrowTexture(SDL_Arrow* arrow);
+    int getArrowTexture(LTexture* gTextTexture[],SDL_Arrow* arrow,const SDL_Color& color);
+    int getOutputTexture(LTexture* gTextTexture[],SDL_Output* arrow,const SDL_Color& color);
     inline int getNumberOfElements() const { return graphelements.size(); }
-    inline int getNumberOfInputs() const { return n_inputs; }
+    inline int getNumberOfInputs() const { return inputset.size(); }
+    inline int getNumberOfOutputs() const { return outputset.size(); }
 	inline const char* getName(){	return name.c_str();}
 
 };

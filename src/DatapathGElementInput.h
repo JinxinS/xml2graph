@@ -10,6 +10,8 @@
 #include <string>
 #include <map>
 #include <list>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL.h>
 #include "xml2graphdef.h"
 class DatapathGElement;
 class DatapathGElementOutput;
@@ -25,8 +27,9 @@ public:
 	void levelize(int lvl,std::map<int, std::list<DatapathGElement*> >& linfo);
 	DatapathGElementInput(const DatapathGElementInput&);
 	DatapathGElementInput& operator=(const DatapathGElementInput&);
-	void compute(const int x, const int y,const int w,const int h);
+	void compute(const int x, const int y,const int w,const int h,TTF_Font *font);
 	inline const SDL_Arrow& getArrowPosition() const {return pos;}
+	inline const char * getText() const {return name;}
 };
 
 #endif /* DATAPATHGELEMENTINPUT_H_ */

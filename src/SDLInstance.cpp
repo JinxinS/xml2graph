@@ -20,7 +20,7 @@ SDLInstance::SDLInstance()
 :gWindow(),
  gRenderer(),
  gFont(),
- //gTextTexture(),
+ gInputFont(),
  gArrowTexture()
 {
 	// TODO Auto-generated constructor stub
@@ -92,6 +92,15 @@ bool SDLInstance::init(const char* title) {
 					printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
 					success = false;
 				}
+
+				//Open the font
+				gInputFont = TTF_OpenFont( "/usr/share/fonts/truetype/droid/DroidSansMono.ttf", 10 );
+				if( gInputFont == NULL )
+				{
+					printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+					success = false;
+				}
+
 			}
 		}
 	}
@@ -170,9 +179,17 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 
 	//Get number of Arrows and Create arrowTexture
 	int n_arrows = g->getNumberOfInputs();
+	LTexture* gArrowTextTexture[n_arrows];
+	for(int i = 0 ; i< n_arrows; ++i) gArrowTextTexture[i]  =  new  LTexture(gRenderer,gInputFont);
 	SDL_Arrow* arrowRects  = new SDL_Arrow[n_arrows];
-	g->getArrowTexture(arrowRects);
+	g->getArrowTexture(gArrowTextTexture,arrowRects,textColor);
 
+	//Get number of outputs and Create outputTexture
+	int n_outputs =  g->getNumberOfOutputs();
+	LTexture* gOutputTextTexture[n_outputs];
+	for(int i = 0 ; i< n_outputs; ++i) gOutputTextTexture[i]  =  new  LTexture(gRenderer,gInputFont);
+	SDL_Output* outputs  = new SDL_Output[n_outputs];
+	g->getOutputTexture(gOutputTextTexture,outputs,textColor);
 
 	//While application is running
 
@@ -194,7 +211,17 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 
 		//Render Arrow
 		for(int i = 0 ; i < n_arrows; ++i)
-				gArrowTexture->render( arrowRects[i].p.x, arrowRects[i].p.y, NULL,arrowRects[i].angle );
+			gArrowTexture->render( arrowRects[i].p.x, arrowRects[i].p.y, NULL,arrowRects[i].angle );
+		//Render input text textures
+		for(int i = 0 ; i< n_arrows; ++i)
+			gArrowTextTexture[i]->render(arrowRects[i].textp.x, arrowRects[i].textp.y);
+
+		//Render output text textures
+		for(int i = 0 ; i< n_outputs; ++i){
+			if((outputs[i].textp.x == 0 )&&(outputs[i].textp.y == 0)) continue;
+			gOutputTextTexture[i]->render(outputs[i].textp.x, outputs[i].textp.y);
+		}
+
 
 		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 		SDL_RenderDrawRects( gRenderer, outlineRects,n_rects );
@@ -225,7 +252,9 @@ void SDLInstance::close()
 	gArrowTexture = NULL;
 	//Free global font
 	TTF_CloseFont( gFont );
+	TTF_CloseFont( gInputFont );
 	gFont = NULL;
+	gInputFont = NULL;
 
 	//Destroy window
 	SDL_DestroyRenderer( gRenderer );

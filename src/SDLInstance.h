@@ -24,6 +24,9 @@ class SDLInstance {
 	//Globally used font
 	TTF_Font *gFont;
 
+	//Input used font
+	TTF_Font *gInputFont;
+
 	//Scene textures
 	//LTexture* gTextTexture;
 	LTexture* gArrowTexture;
@@ -38,7 +41,8 @@ public:
 	bool draw(DatapathGraphInfo* g);
 	void close();
 	inline TTF_Font * getFont() const{ return gFont;}
-
+	inline TTF_Font * getInputFont() const{ return gInputFont;}
+	inline LTexture * getArrowTexture() const{ return gArrowTexture;}
 };
 
 #endif /* SDLINSTANCE_H_ */

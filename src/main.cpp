@@ -32,11 +32,6 @@ int main( int argc,const char* args[] )
 	}
 	else
 	{
-		/*compute position for all elements*/
-		graphInfo->compute(sdlInstance.getFont());
-
-
-		/*compute connection information  */
 		//Load media
 		if( !sdlInstance.loadMedia() )
 		{
@@ -44,6 +39,12 @@ int main( int argc,const char* args[] )
 		}
 		else
 		{
+			/*compute position for all elements*/
+			graphInfo->compute(sdlInstance.getFont(),sdlInstance.getInputFont(),sdlInstance.getArrowTexture());
+
+			/*compute connection information  */
+
+			/*draw!*/
 			sdlInstance.draw(graphInfo);
 		}
 	}

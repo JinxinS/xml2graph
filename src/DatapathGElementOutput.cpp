@@ -11,7 +11,8 @@
 DatapathGElementOutput::DatapathGElementOutput(const char* n,DatapathGElement* p):
 name(n),
 destationInputs(),
-parent(p)
+parent(p),
+pos()
 {
 	// TODO Auto-generated constructor stub
 
@@ -29,4 +30,17 @@ void DatapathGElementOutput::levelize(int lvl,std::map<int, std::list<DatapathGE
 	for(std::set<DatapathGElementInput*>::const_iterator it = destationInputs.begin(); it!=destationInputs.end();++it){
 		(*it)->levelize(lvl,linfo);
 	}
+}
+
+void DatapathGElementOutput::compute(const int x, const int y,TTF_Font *font){
+	int text_w,text_h;
+	TTF_SizeText(font,name,&text_w, &text_h);
+
+
+	pos.p.x = x;
+	pos.p.y = y;
+	pos.textp.x = x - (text_w/2);
+	pos.textp.y=  y - (text_h);
+
+
 }

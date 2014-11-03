@@ -10,7 +10,7 @@
 #include <SDL2/SDL.h>
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1024;
+const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 768;
 
 
@@ -25,9 +25,16 @@ struct size{
 } ;
 
 struct SDL_Arrow{
-	SDL_Point p;
-	double angle;
+	SDL_Rect  textp;					//input name position
+	SDL_Point p;						//arrow position
+	double angle;						//direction of the angle
 } ;
+
+
+struct SDL_Output{
+	SDL_Rect  textp;					//output name position
+	SDL_Point p;						//output node position
+};
 
 struct dis_position{
 	float x;

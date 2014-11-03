@@ -8,12 +8,13 @@
 #include "DatapathGraphInfo.h"
 #include "DatapathGElement.h"
 #include "DatapathGElementInput.h"
+#include "DatapathGElementOutput.h"
 #include "LTexture.h"
 #include <string.h>
 DatapathGraphInfo::DatapathGraphInfo(const std::string& n)
 :name(n),
- n_inputs(),
  inputset(),
+ outputset(),
  graphelements(),
  levelinfo()
 {
@@ -39,9 +40,14 @@ void DatapathGraphInfo::addPortToElement(const char* fname, const char* iname,co
 	const char* sfname =  strtok (const_cast<char*>(oname),".");
 	const char* soname =  strtok (NULL,".");
 	if(soname!=NULL){
-		DatapathGElement* gSourceElement = graphelements.at(sfname);
 		DatapathGElementInput* in = new DatapathGElementInput(iname,gElement);
-		gElement->connect(in,gSourceElement,soname);
+		inputset.insert(in);
+
+		DatapathGElement* gSourceElement = graphelements.at(sfname);
+		DatapathGElementOutput* out = gSourceElement->getElementOutput(soname);
+		outputset.insert(out);
+		gElement->connect(in,out);
+		//printf("%s.%s -> %s.%s \n",sfname,soname,gElement->getName(),iname);
 	}else{
 		/*input connect to undefiend or constant*/
 	}
@@ -52,7 +58,7 @@ void DatapathGraphInfo::levelize(){
 	ctrl->levelize(0,levelinfo);
 }
 
-void DatapathGraphInfo::compute(TTF_Font *gFont){
+void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arrowTexture){
 	float max_n = 0;													//max number of element per row
 	float max_l = levelinfo.size();									//max number of rows
 	float swratio = 0.5;												// space-width ratio
@@ -77,7 +83,7 @@ void DatapathGraphInfo::compute(TTF_Font *gFont){
 		p.x = xDisp;
 		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr ){
 			DatapathGElement* e = (*itr);
-			n_inputs += e->compute(p.x,p.y,width,height,gFont);
+			e->compute(p.x,p.y,width,height,gFont,gInFont,arrowTexture);
 			p.x +=(xDisp + width);
 		}
 		p.y +=(yDisp + height);
@@ -110,17 +116,26 @@ int DatapathGraphInfo::getTextTexture(LTexture* gTextTexture[],SDL_Rect* gTextPo
 }
 
 
-int DatapathGraphInfo::getArrowTexture(SDL_Arrow* arrow){
+int DatapathGraphInfo::getArrowTexture(LTexture* gTextTexture[],SDL_Arrow* arrow,const SDL_Color& color){
 	int i = 0;
-	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
-		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr){
-			DatapathGElement* e = (*itr);
-			int idx = i;
-			i += e->getArrowPositions(arrow,idx);
-		}
+	for(auto it = inputset.begin();it!=inputset.end();++it,++i){
+		gTextTexture[i]->loadFromRenderedText((*it)->getText(),color);
+		arrow[i] = (*it)->getArrowPosition();
 	}
 	return 1;
 }
+
+int DatapathGraphInfo::getOutputTexture(LTexture* gTextTexture[],SDL_Output* arrow,const SDL_Color& color){
+	int i = 0;
+	for(auto it = outputset.begin();it!=outputset.end();++it,++i){
+		gTextTexture[i]->loadFromRenderedText((*it)->getText(),color);
+		arrow[i] = (*it)->getOutputPosition();
+		printf("%s.",(*it)->getParent()->getName());
+		printf("%s @ %d %d \n",(*it)->getText(),arrow[i].textp.x,arrow[i].textp.y);
+	}
+	return 1;
+}
+
 
 #include <iostream>
 void DatapathGraphInfo::printlevel(){

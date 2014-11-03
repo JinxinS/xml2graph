@@ -8,6 +8,7 @@
 #include "DatapathGElement.h"
 #include "DatapathGElementOutput.h"
 #include "DatapathGElementInput.h"
+#include "LTexture.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -37,7 +38,7 @@ void DatapathGElement::addInPort(DatapathGElementInput* i){
 	inputs.insert(i);
 }
 
-void DatapathGElement::registerDestPort(DatapathGElementInput* in,const char* o){
+DatapathGElementOutput* DatapathGElement::getElementOutput(const char* o){
 	DatapathGElementOutput* out;
 	char outname= *o;
 	if(outputs.find(outname)==outputs.end()) {
@@ -46,13 +47,13 @@ void DatapathGElement::registerDestPort(DatapathGElementInput* in,const char* o)
 	}else{
 		out= outputs.at(outname);
 	}
-	out->registerInput(in);
-	in->registerOutput(out);
+	return out;
 }
 
-void DatapathGElement::connect(DatapathGElementInput* i,DatapathGElement* s,const char* o){
+void DatapathGElement::connect(DatapathGElementInput* i,DatapathGElementOutput* o){
 	this->addInPort(i);
-	s->registerDestPort(i,o);
+	o->registerInput(i);
+	i->registerOutput(o);
 }
 
 void DatapathGElement::levelize(int lvl,std::map<int, std::list<DatapathGElement*> >& linfo){
@@ -74,9 +75,9 @@ void DatapathGElement::levelize(int lvl,std::map<int, std::list<DatapathGElement
 	}
 }
 
-int DatapathGElement::compute(const int x, const int y,const int w,const int h,TTF_Font *font){
+void DatapathGElement::compute(const int x, const int y,const int w,const int h,TTF_Font *font,TTF_Font *gInFont,LTexture * arrowTexture){
 	int text_w, text_h;
-
+	int arrow_w, arrow_h;
 	rect.x = x;
 	rect.y = y;
 	rect.h = h;
@@ -88,20 +89,24 @@ int DatapathGElement::compute(const int x, const int y,const int w,const int h,T
 	tx_pos.h = text_h;
 	tx_pos.w = text_w;
 
+	arrow_w = arrowTexture->getWidth()/2;
+	arrow_h = arrowTexture->getHeight()/1.5;
+	//printf("arrow_w %d arrow_h %d \n",arrow_w,arrow_h);
 	int delta = w / (inputs.size() + 1);
-	int i = 0;
-	for(auto in = inputs.begin(); in != inputs.end(); ++in,++i){
-		(*in)->compute(x + delta*(i+1), y, w, h);
+	int deltatotal = delta ;
+	for(auto in = inputs.begin(); in != inputs.end(); ++in){
+		(*in)->compute(x + deltatotal, y, arrow_w, arrow_h, gInFont );
+		deltatotal+=delta;
 	}
-	return i ;
+
+
+	delta = w / (outputs.size() + 1);
+	deltatotal = delta ;
+	for(auto out = outputs.begin(); out != outputs.end(); ++out){
+		(out->second)->compute(x + deltatotal, y + h , gInFont );
+		deltatotal+=delta;
+	}
+
 }
 
-int  DatapathGElement::getArrowPositions(SDL_Arrow* arrow ,int idx){
-	int i = 0;
-	for(auto in = inputs.begin(); in != inputs.end(); ++in,++i){
-		arrow[idx + i] = (*in)->getArrowPosition();
-		//printf("arrow[%d] x %d y %d \n",arrow[idx+i],arrow[idx + i].p.x,arrow[idx + i].p.y);
-	}
-	return i;
-}
 

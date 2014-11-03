@@ -8,6 +8,7 @@
 #include "DatapathGElementInput.h"
 #include "DatapathGElement.h"
 
+
 DatapathGElementInput::DatapathGElementInput(const char* n,DatapathGElement* p)
 :name(n),
  sourceOutput(),
@@ -31,8 +32,14 @@ void DatapathGElementInput::levelize(int lvl,std::map<int, std::list<DatapathGEl
 	parent->levelize(lvl,linfo);
 }
 
-void DatapathGElementInput::compute(const int x, const int y,const int w,const int h){
-	pos.p.x = x;
-	pos.p.y = y;
+void DatapathGElementInput::compute(const int x, const int y,const int w,const int h,TTF_Font *font){
+	int text_w,text_h;
+	TTF_SizeText(font,name,&text_w, &text_h);
+
+
+	pos.p.x = x - w;
+	pos.p.y = y - h;
 	pos.angle = 90;
+	pos.textp.x = x - (text_w/2);
+	pos.textp.y=  y ;
 }
