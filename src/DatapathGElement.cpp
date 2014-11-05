@@ -18,7 +18,8 @@ DatapathGElement::DatapathGElement(const char* n,const char* f):
 	text(),
 	inputs(),
 	outputs(),
-	level(-1),
+	rowidx(-1),
+	colidx(-1),
 	tx_pos({0,0,0,0}),
 	rect({0,0,0,0})
 {
@@ -56,22 +57,25 @@ void DatapathGElement::connect(DatapathGElementInput* i,DatapathGElementOutput* 
 	i->registerOutput(o);
 }
 
-void DatapathGElement::levelize(int lvl,std::map<int, std::list<DatapathGElement*> >& linfo){
-	if(level != -1) return;
+void DatapathGElement::levelize(int row,int col, std::map<int, std::list<DatapathGElement*> >& linfo){
+	if(rowidx != -1) return;
 
-	level = lvl++; //current level
-	if(linfo.find(level) == linfo.end()){
+	rowidx = row++; //current level
+	if(linfo.find(rowidx) == linfo.end()){
 		std::list<DatapathGElement*>* llist = new std::list<DatapathGElement*>();
+		colidx = llist->size();
 		llist->push_back(this);
-		linfo.insert(std::make_pair(level,*llist));
+		linfo.insert(std::make_pair(rowidx,*llist));
 	}else{
-		std::list<DatapathGElement*>& llist = linfo.at(level);
+		std::list<DatapathGElement*>& llist = linfo.at(rowidx);
+		colidx = llist.size();
 		llist.push_back(this);
 	}
-//	printf("fu %s set to level %d \n",name,level);
+//	printf("fu %s set to row %d col %d \n",name,rowidx, colidx);
+
 	for(std::map<char,DatapathGElementOutput*>::const_iterator it = outputs.begin();it != outputs.end();++it){
 		DatapathGElementOutput* e = it->second;
-		e->levelize(lvl,linfo);
+		e->levelize(row,col,linfo);
 	}
 }
 
@@ -103,7 +107,7 @@ void DatapathGElement::compute(const int x, const int y,const int w,const int h,
 	delta = w / (outputs.size() + 1);
 	deltatotal = delta ;
 	for(auto out = outputs.begin(); out != outputs.end(); ++out){
-		(out->second)->compute(x + deltatotal, y + h , gInFont );
+		(out->second)->compute(x + deltatotal, y + h , gInFont);
 		deltatotal+=delta;
 	}
 

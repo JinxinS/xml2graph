@@ -23,7 +23,8 @@ class DatapathGElement {
 	char*  text;
 	std::set<DatapathGElementInput*> inputs;
 	std::map<char,DatapathGElementOutput*> 	outputs;
-	int level;
+	int rowidx;
+	int colidx;
 	SDL_Rect tx_pos;
 	SDL_Rect rect;
 private:
@@ -36,7 +37,7 @@ public:
 	virtual ~DatapathGElement();
 	DatapathGElementOutput* getElementOutput(const char*);
 	void connect(DatapathGElementInput* i,DatapathGElementOutput* o);
-	void levelize(int,std::map<int, std::list<DatapathGElement*> >&);
+	void levelize(int, int , std::map<int, std::list<DatapathGElement*> >&);
 	void compute(const int x, const int y,const int w,const int h,TTF_Font *font,TTF_Font *gInFont,LTexture * arrowTexture);
 	inline const SDL_Rect& getOutlineRect() const { return rect;}
 	inline const SDL_Rect& getTextPosition() const { return tx_pos;}

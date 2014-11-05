@@ -24,10 +24,12 @@ public:
 	DatapathGElementOutput(const char* n,DatapathGElement* p);
 	virtual ~DatapathGElementOutput();
 	void registerInput(DatapathGElementInput*);
-	void levelize(int lvl,std::map<int, std::list<DatapathGElement*> >&);
+	void levelize(int row,int col, std::map<int, std::list<DatapathGElement*> >&);
 	DatapathGElementOutput(const DatapathGElementOutput&);
 	DatapathGElementOutput& operator=(const DatapathGElementOutput&);
 	void compute(const int x, const int y,TTF_Font *font);
+	void route(SDL_LNode* origin, SDL_LNode* destination);
+	void computeConnections(std::set<SDL_LNode*>& cset);
 	inline const SDL_Output& getOutputPosition() const {return pos;}
 	inline const char * getText() const {return name;}
 	inline const DatapathGElement * getParent() const {return parent;}

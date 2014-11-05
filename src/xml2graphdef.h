@@ -27,6 +27,7 @@ struct size{
 struct SDL_Arrow{
 	SDL_Rect  textp;					//input name position
 	SDL_Point p;						//arrow position
+	SDL_Point cp;						//Line connection position
 	double angle;						//direction of the angle
 } ;
 
@@ -34,6 +35,14 @@ struct SDL_Arrow{
 struct SDL_Output{
 	SDL_Rect  textp;					//output name position
 	SDL_Point p;						//output node position
+};
+
+struct SDL_LNode{
+	SDL_Point p;
+	SDL_LNode* next;
+	SDL_LNode(SDL_Point p)
+	:p(p),
+	 next(NULL){}
 };
 
 struct dis_position{

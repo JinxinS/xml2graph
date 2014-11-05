@@ -191,6 +191,8 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 	SDL_Output* outputs  = new SDL_Output[n_outputs];
 	g->getOutputTexture(gOutputTextTexture,outputs,textColor);
 
+	//Get lines
+	const std::set<SDL_LNode*>& lset = g->getLines();
 	//While application is running
 
 	while( !quit )
@@ -222,6 +224,16 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 			gOutputTextTexture[i]->render(outputs[i].textp.x, outputs[i].textp.y);
 		}
 
+		//Render Connections
+		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+		for(auto i = lset.begin() ; i != lset.end(); ++i){
+			SDL_LNode* node = (*i);
+			while(node->next != NULL){
+				SDL_RenderDrawLine( gRenderer, node->p.x, node->p.y,node->next->p.x, node->next->p.y );
+				node = node->next;
+			}
+		}
+
 
 		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 		SDL_RenderDrawRects( gRenderer, outlineRects,n_rects );
@@ -235,10 +247,14 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 	}
 
 	//free up
-	for(int i = 0 ; i< n_rects; ++i) delete gTextTexture[i];
+	for(int i = 0 ; i< n_rects; ++i){
+		delete gTextTexture[i];
+		delete gArrowTextTexture[i];
+		delete gOutputTextTexture[i];
+	}
     delete []outlineRects;
     delete []arrowRects;
-
+    delete []outputs;
     return quit;
 }
 

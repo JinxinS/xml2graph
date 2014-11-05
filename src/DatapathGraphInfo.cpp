@@ -15,6 +15,7 @@ DatapathGraphInfo::DatapathGraphInfo(const std::string& n)
 :name(n),
  inputset(),
  outputset(),
+ connectionSet(),
  graphelements(),
  levelinfo()
 {
@@ -55,7 +56,7 @@ void DatapathGraphInfo::addPortToElement(const char* fname, const char* iname,co
 
 void DatapathGraphInfo::levelize(){
 	DatapathGElement* ctrl = graphelements.at("siw_ctrl");
-	ctrl->levelize(0,levelinfo);
+	ctrl->levelize(0,0,levelinfo);
 }
 
 void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arrowTexture){
@@ -78,7 +79,7 @@ void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arr
 
 	//start position
 	position p = { xDisp, yDisp};
-
+	//compute positions for Functional Unit and Input/OutputPort
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
 		p.x = xDisp;
 		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr ){
@@ -87,6 +88,12 @@ void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arr
 			p.x +=(xDisp + width);
 		}
 		p.y +=(yDisp + height);
+	}
+
+
+	//determine Line Connections
+	for(auto o = outputset.begin(); o != outputset.end(); ++o){
+		(*o)->computeConnections(connectionSet);
 	}
 }
 
@@ -130,8 +137,8 @@ int DatapathGraphInfo::getOutputTexture(LTexture* gTextTexture[],SDL_Output* arr
 	for(auto it = outputset.begin();it!=outputset.end();++it,++i){
 		gTextTexture[i]->loadFromRenderedText((*it)->getText(),color);
 		arrow[i] = (*it)->getOutputPosition();
-		printf("%s.",(*it)->getParent()->getName());
-		printf("%s @ %d %d \n",(*it)->getText(),arrow[i].textp.x,arrow[i].textp.y);
+//		printf("%s.",(*it)->getParent()->getName());
+//		printf("%s @ %d %d \n",(*it)->getText(),arrow[i].textp.x,arrow[i].textp.y);
 	}
 	return 1;
 }
