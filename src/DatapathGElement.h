@@ -27,6 +27,7 @@ class DatapathGElement {
 	int colidx;
 	SDL_Rect tx_pos;
 	SDL_Rect rect;
+	friend class DatapathGElementOutput;
 private:
 	void addInPort(DatapathGElementInput* i);
 public:

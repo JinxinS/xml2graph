@@ -12,16 +12,19 @@
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 768;
+//const float swratio = 0.5;												// space-width ratio
+//const float shratio = 0.5;												// space-height ratio
+const int wsratio = 2;												// space-width ratio
+const int hsratio = 2;												// space-height ratio
 
-
-struct position {
-	float x;
-	float y;
-} ;
+//struct position {
+//	int  x;
+//	int y;
+//} ;
 
 struct size{
-	float width;
-	float height;
+	int width;
+	int height;
 } ;
 
 struct SDL_Arrow{

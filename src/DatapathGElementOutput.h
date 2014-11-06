@@ -20,6 +20,9 @@ class DatapathGElementOutput {
 	std::set<DatapathGElementInput*> destationInputs;
 	DatapathGElement* parent;
 	SDL_Output pos;
+private:
+	int rand_number(int from, int to);
+	SDL_LNode* route(const SDL_Rect&,const SDL_Output& origin,const SDL_Rect&, const SDL_Arrow& destination);
 public:
 	DatapathGElementOutput(const char* n,DatapathGElement* p);
 	virtual ~DatapathGElementOutput();
@@ -28,7 +31,6 @@ public:
 	DatapathGElementOutput(const DatapathGElementOutput&);
 	DatapathGElementOutput& operator=(const DatapathGElementOutput&);
 	void compute(const int x, const int y,TTF_Font *font);
-	void route(SDL_LNode* origin, SDL_LNode* destination);
 	void computeConnections(std::set<SDL_LNode*>& cset);
 	inline const SDL_Output& getOutputPosition() const {return pos;}
 	inline const char * getText() const {return name;}

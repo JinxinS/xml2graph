@@ -95,7 +95,7 @@ void DatapathGElement::compute(const int x, const int y,const int w,const int h,
 
 	arrow_w = arrowTexture->getWidth()/2;
 	arrow_h = arrowTexture->getHeight()/1.5;
-	//printf("arrow_w %d arrow_h %d \n",arrow_w,arrow_h);
+	//printf("%d %d arrow_w %d arrow_h %d \n",arrowTexture->getWidth(),arrowTexture->getHeight(),arrow_w,arrow_h);
 	int delta = w / (inputs.size() + 1);
 	int deltatotal = delta ;
 	for(auto in = inputs.begin(); in != inputs.end(); ++in){

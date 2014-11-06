@@ -60,25 +60,23 @@ void DatapathGraphInfo::levelize(){
 }
 
 void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arrowTexture){
-	float max_n = 0;													//max number of element per row
-	float max_l = levelinfo.size();									//max number of rows
-	float swratio = 0.5;												// space-width ratio
-	float shratio = 0.5;												// space-height ratio
+	int max_n = 0;													//max number of element per row
+	int max_l = levelinfo.size();									//max number of rows
 
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
-		if ( max_n < (float)(it->second).size())	max_n = (float)(it->second).size();
+		if ((size_t)max_n < (it->second).size())	max_n = (it->second).size();
 	}
 
 	// width and height of the functional unit
-	float width  = SCREEN_WIDTH  /(max_n + (max_n+1)*swratio);
-	float height = SCREEN_HEIGHT /(max_l + (max_l+1)*shratio);
+	int width  = SCREEN_WIDTH  /(max_n + (max_n+1)/wsratio);
+	int height = SCREEN_HEIGHT /(max_l + (max_l+1)/hsratio);
 
 	// displacement of the functional unit
-	float xDisp =  width*swratio;
-	float yDisp =  height*shratio;
+	int xDisp =  width/wsratio;
+	int yDisp =  height/hsratio;
 
 	//start position
-	position p = { xDisp, yDisp};
+	SDL_Point p = { xDisp, yDisp};
 	//compute positions for Functional Unit and Input/OutputPort
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
 		p.x = xDisp;

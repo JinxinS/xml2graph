@@ -24,7 +24,6 @@ int main( int argc,const char* args[] )
 	//levelize all elements
 	graphInfo->levelize();
 
-
 	//Start up SDL and create window
 	if( !sdlInstance.init(graphInfo->getName()) )
 	{
