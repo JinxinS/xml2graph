@@ -90,9 +90,13 @@ void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arr
 
 
 	//determine Line Connections
-	for(auto o = outputset.begin(); o != outputset.end(); ++o){
-		(*o)->computeConnections(connectionSet);
+	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
+		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr ){
+			DatapathGElement* e = (*itr);
+			e->route(connectionSet);
+		}
 	}
+
 }
 
 int DatapathGraphInfo::getOutlineRects(SDL_Rect* rects){

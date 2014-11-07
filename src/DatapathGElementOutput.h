@@ -20,9 +20,10 @@ class DatapathGElementOutput {
 	std::set<DatapathGElementInput*> destationInputs;
 	DatapathGElement* parent;
 	SDL_Output pos;
+	int offset;
 private:
 	int rand_number(int from, int to);
-	SDL_LNode* route(const SDL_Rect&,const SDL_Output& origin,const SDL_Rect&, const SDL_Arrow& destination);
+	void route(const SDL_Rect&,const SDL_Output& origin,const SDL_Rect&, const SDL_Arrow& destination,std::set<SDL_LNode*>& cset);
 public:
 	DatapathGElementOutput(const char* n,DatapathGElement* p);
 	virtual ~DatapathGElementOutput();

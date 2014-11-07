@@ -39,6 +39,7 @@ public:
 	DatapathGElementOutput* getElementOutput(const char*);
 	void connect(DatapathGElementInput* i,DatapathGElementOutput* o);
 	void levelize(int, int , std::map<int, std::list<DatapathGElement*> >&);
+	void route( std::set<SDL_LNode*>& connectionSet);
 	void compute(const int x, const int y,const int w,const int h,TTF_Font *font,TTF_Font *gInFont,LTexture * arrowTexture);
 	inline const SDL_Rect& getOutlineRect() const { return rect;}
 	inline const SDL_Rect& getTextPosition() const { return tx_pos;}

@@ -72,10 +72,17 @@ void DatapathGElement::levelize(int row,int col, std::map<int, std::list<Datapat
 		llist.push_back(this);
 	}
 //	printf("fu %s set to row %d col %d \n",name,rowidx, colidx);
-
+	col = colidx;
 	for(std::map<char,DatapathGElementOutput*>::const_iterator it = outputs.begin();it != outputs.end();++it){
 		DatapathGElementOutput* e = it->second;
 		e->levelize(row,col,linfo);
+		col+=3;
+	}
+}
+
+void DatapathGElement::route(std::set<SDL_LNode*>& cSet){
+	for(auto out = outputs.begin(); out != outputs.end(); ++out){
+		(out->second)->computeConnections(cSet);
 	}
 }
 

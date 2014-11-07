@@ -12,7 +12,8 @@ DatapathGElementOutput::DatapathGElementOutput(const char* n,DatapathGElement* p
 name(n),
 destationInputs(),
 parent(p),
-pos()
+pos(),
+offset(5)
 {
 	// TODO Auto-generated constructor stub
 
@@ -27,6 +28,7 @@ void DatapathGElementOutput::registerInput(DatapathGElementInput* in){
 }
 
 void DatapathGElementOutput::levelize(int row,int col,std::map<int, std::list<DatapathGElement*> >& linfo){
+	offset += col;
 	for(std::set<DatapathGElementInput*>::const_iterator it = destationInputs.begin(); it!=destationInputs.end();++it){
 		(*it)->levelize(row,col,linfo);
 	}
@@ -47,7 +49,7 @@ int DatapathGElementOutput::rand_number(int from, int to){
 }
 
 
-SDL_LNode* DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& origin,const SDL_Rect& outlineR2, const SDL_Arrow& destination){
+void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& origin,const SDL_Rect& outlineR2, const SDL_Arrow& destination,std::set<SDL_LNode*>& cset){
 	SDL_LNode* route_start =  new SDL_LNode(origin.p);
 	SDL_LNode* route_end   =  new SDL_LNode(destination.cp);
 	const int ox = origin.p.x;
@@ -71,11 +73,44 @@ SDL_LNode* DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Out
 
 	if(oy < dy){
 		if( (dboundary_yup - oboundary_ydn) >  free_col_space){
-		//	route_start->next = route_end;
-		}else{
-			int cy = rand_number(dy-12,dy-5);
-			printf("from %d to %d cy %d \n",dy-12,dy-8,cy);
+			int cy = oy + offset;
 
+			SDL_Point c1 = { ox, cy};
+			SDL_LNode* corner1 =  new SDL_LNode(c1);
+			route_start->next = corner1;
+
+			int c2x = (ox > dx) ? (oboundary_xlft- offset ) :  (oboundary_xrht + offset );
+			SDL_Point c2 = {c2x,cy};
+			SDL_LNode* corner2 =  new SDL_LNode(c2);
+			corner1->next = corner2;
+
+			SDL_Point c3 =  { c2x, dy-8};
+			SDL_LNode* corner3 =  new SDL_LNode(c3);
+			corner2->next = corner3;
+
+			SDL_Point c4 =  { dx, dy-8};;
+			SDL_LNode* corner4 =  new SDL_LNode(c4);
+			corner3->next = corner4;
+			corner4->next = route_end;
+
+		}else{
+			int cy = oy + offset;
+
+			for(auto it = cset.begin();it != cset.end();++it){
+				if(((*it)->next == NULL)||((*it)->next->next == NULL)) continue;
+				if((*it)->next->next->p.x == ox){
+						//printf("%d %d %d \n",oy,dy,(*it)->next->next->p.y);
+					if(((*it)->next->next->p.y < dy)&&((*it)->next->next->p.y > oy)){
+						if((*it)->next->next->p.y < cy){
+							cy = (*it)->next->next->p.y -2;
+						//	printf("!%s.%s -> %d \n",this->getParent()->getName(),this->getText(),cy);
+
+						}
+					}
+				}
+			}
+
+			//printf("%s.%s -> %d \n",this->getParent()->getName(),this->getText(),cy);
 			SDL_Point c1 = { ox, cy};
 			SDL_LNode* corner1 =  new SDL_LNode(c1);
 			route_start->next = corner1;
@@ -86,7 +121,7 @@ SDL_LNode* DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Out
 
 		}
 	}
-	//	else if(oy > dy){
+	//	else if(oy > dy){						//feedback
 	//		SDL_Point c1 = {ox, (oy + 8) };
 	//		SDL_LNode* corner1 =  new SDL_LNode(c1);
 	//		route_start->next = corner1;
@@ -104,7 +139,7 @@ SDL_LNode* DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Out
 	//	else{
 	//		route_start->next = route_end;
 	//	}
-	return route_start;
+	cset.insert(route_start);
 }
 
 void DatapathGElementOutput::computeConnections(std::set<SDL_LNode*>& cset){
@@ -114,11 +149,9 @@ void DatapathGElementOutput::computeConnections(std::set<SDL_LNode*>& cset){
 
 	for(std::set<DatapathGElementInput*>::const_iterator it = destationInputs.begin(); it!=destationInputs.end();++it){
 		const SDL_Rect&  outlineR2 = (*it)->getParent()->getOutlineRect();
+		printf("routing %s.%s  , %s.%s   \n",this->getParent()->getName(),this->getText(),
+								 (*it)->getParent()->getName(),(*it)->getText());
+		route(outlineR1,this->pos,outlineR2,(*it)->getArrowPosition(),cset);
 
-		SDL_LNode* r = route(outlineR1,this->pos,outlineR2,(*it)->getArrowPosition());
-		cset.insert(r);
-		//		printf("%s.%s x(%d) y(%d), %s.%s x(%d) y(%d) \n",this->getParent()->getName(),this->getText(),
-		//				route_start->p.x, route_start->p.y,
-		//				(*it)->getParent()->getName(),(*it)->getText(),route_end->p.x,route_end->p.y);
 	}
 }
