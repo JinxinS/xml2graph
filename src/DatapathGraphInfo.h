@@ -18,11 +18,12 @@ class LTexture;
 class DatapathGElement;
 class DatapathGElementInput;
 class DatapathGElementOutput;
+class SDL_Line;
 class DatapathGraphInfo {
 	std::string name;
 	std::set<DatapathGElementInput*> inputset;
 	std::set<DatapathGElementOutput*> outputset;
-	std::set<SDL_LNode*> connectionSet;
+	std::set<SDL_Line*> lines;
 	std::map<std::string, DatapathGElement*> graphelements;
 	std::map<int, std::list<DatapathGElement*> > levelinfo;
 private:
@@ -42,7 +43,7 @@ public:
     inline int getNumberOfElements() const { return graphelements.size(); }
     inline int getNumberOfInputs() const { return inputset.size(); }
     inline int getNumberOfOutputs() const { return outputset.size(); }
-    inline const std::set<SDL_LNode*>& getLines() const { return connectionSet; }
+    inline const std::set<SDL_Line*>& getLines() const { return lines; }
 	inline const char* getName(){	return name.c_str();}
 
 };

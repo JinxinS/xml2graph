@@ -15,15 +15,21 @@
 #include "xml2graphdef.h"
 class DatapathGElementInput;
 class DatapathGElement;
+class SDL_Line;
 class DatapathGElementOutput {
 	const char* name;
 	std::set<DatapathGElementInput*> destationInputs;
 	DatapathGElement* parent;
 	SDL_Output pos;
 	int offset;
+	char* origin;
+	std::set<SDL_Line*> routes;
 private:
 	int rand_number(int from, int to);
-	void route(const SDL_Rect&,const SDL_Output& origin,const SDL_Rect&, const SDL_Arrow& destination,std::set<SDL_LNode*>& cset);
+	int adjustL1(SDL_Line* l1,SDL_Line*l2, int upper_bound, int lower_bound);
+	void adjustRoutes(int offset,int idx);
+	bool isOverLap(SDL_Line* l1,SDL_Line*l2);
+	void route(const SDL_Rect&,const SDL_Output& origin,const SDL_Rect&, const SDL_Arrow& destination,std::set<SDL_Line*>& cset);
 public:
 	DatapathGElementOutput(const char* n,DatapathGElement* p);
 	virtual ~DatapathGElementOutput();
@@ -32,7 +38,7 @@ public:
 	DatapathGElementOutput(const DatapathGElementOutput&);
 	DatapathGElementOutput& operator=(const DatapathGElementOutput&);
 	void compute(const int x, const int y,TTF_Font *font);
-	void computeConnections(std::set<SDL_LNode*>& cset);
+	void computeConnections(std::set<SDL_Line*>& cset);
 	inline const SDL_Output& getOutputPosition() const {return pos;}
 	inline const char * getText() const {return name;}
 	inline const DatapathGElement * getParent() const {return parent;}

@@ -8,14 +8,13 @@
 #ifndef XML2GRAPHDEF_H_
 #define XML2GRAPHDEF_H_
 #include <SDL2/SDL.h>
-
-//Screen dimension constants
 const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 768;
+const int SCREEN_HEIGHT = 800;
 //const float swratio = 0.5;												// space-width ratio
 //const float shratio = 0.5;												// space-height ratio
 const int wsratio = 2;												// space-width ratio
 const int hsratio = 2;												// space-height ratio
+
 
 //struct position {
 //	int  x;
@@ -40,13 +39,30 @@ struct SDL_Output{
 	SDL_Point p;						//output node position
 };
 
-struct SDL_LNode{
-	SDL_Point p;
-	SDL_LNode* next;
-	SDL_LNode(SDL_Point p)
-	:p(p),
-	 next(NULL){}
-};
+
+//struct SDL_Line{
+//	SDL_Point start;
+//	SDL_Point end;
+//	int idx;
+//	SDL_Line* prev;
+//	SDL_Line* next;
+//	SDL_Line(SDL_Point p1,SDL_Point p2,int i,SDL_Line* prv):
+//	start(p1),
+//	end(p2),
+//	idx(i),
+//	prev(prv),
+//	next(){}
+//};
+//
+//struct SDL_Route{
+//	const char* origin;
+//	std::list<SDL_Line*> lines;
+//	SDL_Color rcolor;
+//	SDL_Route(const char* n):
+//		origin(n),
+//		lines(),
+//		rcolor(){}
+//};
 
 struct dis_position{
 	float x;

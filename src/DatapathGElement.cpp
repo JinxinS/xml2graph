@@ -80,7 +80,7 @@ void DatapathGElement::levelize(int row,int col, std::map<int, std::list<Datapat
 	}
 }
 
-void DatapathGElement::route(std::set<SDL_LNode*>& cSet){
+void DatapathGElement::route(std::set<SDL_Line*>& cSet){
 	for(auto out = outputs.begin(); out != outputs.end(); ++out){
 		(out->second)->computeConnections(cSet);
 	}

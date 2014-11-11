@@ -16,6 +16,7 @@
 #include "LTexture.h"
 #include "xml2graphdef.h"
 #include "DatapathGraphInfo.h"
+#include "SDLLine.h"
 SDLInstance::SDLInstance()
 :gWindow(),
  gRenderer(),
@@ -192,7 +193,7 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 	g->getOutputTexture(gOutputTextTexture,outputs,textColor);
 
 	//Get lines
-	const std::set<SDL_LNode*>& lset = g->getLines();
+	const std::set<SDL_Line*>& lines = g->getLines();
 	//While application is running
 
 	while( !quit )
@@ -226,12 +227,10 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 
 		//Render Connections
 		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-		for(auto i = lset.begin() ; i != lset.end(); ++i){
-			SDL_LNode* node = (*i);
-			while(node->next != NULL){
-				SDL_RenderDrawLine( gRenderer, node->p.x, node->p.y,node->next->p.x, node->next->p.y );
-				node = node->next;
-			}
+		for(auto i = lines.begin() ; i != lines.end(); ++i){
+			SDL_Line* l = (*i);
+			SDL_RenderDrawLine( gRenderer,l->start.x, l->start.y,l->end.x,l->end.y );
+
 		}
 
 

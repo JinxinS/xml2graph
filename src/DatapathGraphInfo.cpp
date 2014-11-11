@@ -15,7 +15,7 @@ DatapathGraphInfo::DatapathGraphInfo(const std::string& n)
 :name(n),
  inputset(),
  outputset(),
- connectionSet(),
+ lines(),
  graphelements(),
  levelinfo()
 {
@@ -93,7 +93,7 @@ void DatapathGraphInfo::compute(TTF_Font *gFont,TTF_Font *gInFont,LTexture * arr
 	for(auto it = levelinfo.begin();it!=levelinfo.end();++it){
 		for( auto itr = (it->second).begin();itr !=(it->second).end(); ++itr ){
 			DatapathGElement* e = (*itr);
-			e->route(connectionSet);
+			e->route(lines);
 		}
 	}
 
