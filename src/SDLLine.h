@@ -28,6 +28,8 @@ public:
 		next(),
 		origin(o){}
 	virtual ~SDL_Line();
+	SDL_Line(const SDL_Line&);
+	SDL_Line& operator=(const SDL_Line&);
 };
 
 #endif /* SDLLINE_H_ */

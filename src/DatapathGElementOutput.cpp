@@ -82,13 +82,45 @@ int DatapathGElementOutput::adjustL1(SDL_Line* l1,SDL_Line*l, int upper_bound, i
 	//return 1 means the current line is adjusted
 }
 
+int DatapathGElementOutput::adjustL2(SDL_Line* l2,SDL_Line*l, std::set<int>& hvals){
+
+	int diff = 0;
+
+	do{
+		diff+=1;
+	}while(hvals.find((l2->end.y - diff)) != hvals.end());
+
+	if((l2->end.y - diff) >  l2->prev->start.y) {
+		l2->end.y   -= diff;
+		l2->start.y -= diff;
+		l2->prev->end.y -= diff;
+		l2->next->start.y -=diff;
+		hvals.insert(l2->end.y);
+		return 1;
+	}
+//	else if((l->end.y + diff) < l->next->end.y ) {
+//		l->end.y  += diff;
+//		l->start.y += diff;
+//		l->prev->end.y += diff;
+//		l->next->start.y +=diff;
+//		hvals.insert(l->end.y);
+//		return 0;
+//	}
+	else{
+		printf("adjust failed !\n");
+		exit(0);
+	}
+
+	//return 0 means the lines already existed is adjusted
+	//return 1 means the current line is adjusted
+}
+
 bool DatapathGElementOutput::isOverLap(SDL_Line* l1,SDL_Line*l2){
 	if(l1->start.x == l2->start.x){
 		return ((l1->end.y >= l2->start.y)&&(l1->start.y < l2->end.y));
 	}
 	if(l1->start.y == l2->start.y){
-		return (std::max(l1->start.x,l1->end.x) > std::min(l2->start.x,l2->end.x) )|
-				(std::max(l2->start.x,l2->end.x) > std::min(l1->start.x,l1->end.x) );
+		return ((l1->end.x >= l2->start.x)&&(l1->start.x < l2->end.x) && ((l1->start.x != l2->start.x)&&(l1->end.x != l2->end.x)));
 	}
 	return false;
 }
@@ -96,15 +128,29 @@ bool DatapathGElementOutput::isOverLap(SDL_Line* l1,SDL_Line*l2){
 void DatapathGElementOutput::adjustRoutes(int offset,int idx){
 	this->offset = offset;
 
-	for(auto r = routes.begin(); r != routes.end(); ++r ){
-		SDL_Line* l1 = *r;
-		SDL_Line* l2 = l1->next;
-		SDL_Line* l3 = l2->next;
-		l1->end.y = offset;
-		l2->start.y = offset;
-		l2->end.y = offset;
-		l3->start.y = offset;
+	if(idx ==3){
+		for(auto r = routes.begin(); r != routes.end(); ++r ){
+			SDL_Line* l1 = *r;
+			SDL_Line* l2 = l1->next;
+			SDL_Line* l3 = l2->next;
+			l1->end.y = offset;
+			l2->start.y = offset;
+			l2->end.y = offset;
+			l3->start.y = offset;
+		}
 	}
+	else if(idx ==2){
+		for(auto r = routes.begin(); r != routes.end(); ++r ){
+			SDL_Line* l1 = *r;
+			SDL_Line* l2 = l1->next;
+			SDL_Line* l3 = l2->next;
+			l1->end.y = offset;
+			l2->start.y = offset;
+			l2->end.y = offset;
+			l3->start.y = offset;
+		}
+	}
+
 
 }
 
@@ -116,17 +162,17 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 	const int dx = destination.cp.x;
 	const int dy = destination.cp.y;
 
-	const int oleft_bound = outlineR1.x;
-	const int oright_bound = outlineR1.x + outlineR1.w;
-	const int oupper_bound  = outlineR1.y;
+//	const int oleft_bound = outlineR1.x;
+//	const int oright_bound = outlineR1.x + outlineR1.w;
+//	const int oupper_bound  = outlineR1.y;
 	const int olower_bound  = outlineR1.y + outlineR1.h;
 
-	const int dleft_bound = outlineR2.x;
-	const int dright_bound = outlineR2.x + outlineR2.w;
+//	const int dleft_bound = outlineR2.x;
+//	const int dright_bound = outlineR2.x + outlineR2.w;
 	const int dupper_bound  = outlineR2.y;
-	const int dlower_bound  = outlineR2.y + outlineR2.h;
+//	const int dlower_bound  = outlineR2.y + outlineR2.h;
 
-	const int free_row_space = outlineR2.w/hsratio ;
+//	const int free_row_space = outlineR2.w/hsratio ;
 	const int free_col_space = outlineR2.h/hsratio ;
 
 
@@ -162,6 +208,12 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 			SDL_Line* l3= new SDL_Line(c2, destination.cp, 3,l2,this);
 			l1->next = l2;
 			l2->next = l3;
+			std::set<int> horizonvals;
+			for(auto it = lines.begin();it != lines.end();++it){
+				SDL_Line* l = (*it);
+				if(l->idx == 2) horizonvals.insert(l->start.y);
+			}
+
 			bool overlap = false;
 			do{
 				overlap = false;
@@ -169,7 +221,7 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 					SDL_Line* l = (*it);
 					if(l->idx == 3){
 						overlap =  isOverLap(l1,l);
-						if(overlap) printf("overlap![%d %d] l1 (%d %d) -> (%d %d) l2 (%d %d) -> (%d %d)\n",
+						if(overlap) printf("vertical overlap![%d %d] l1 (%d %d) -> (%d %d) l2 (%d %d) -> (%d %d)\n",
 								olower_bound,
 								dupper_bound,
 								l1->start.x,l1->start.y,l1->end.x,l1->end.y,
@@ -183,6 +235,29 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 								offset = l1->end.y;
 							}
 						}
+					}
+					if(l->idx == 2){
+						overlap =  isOverLap(l2,l);
+						if(overlap) printf("Horizon overlap![%d %d] l2 (%d %d) -> (%d %d) l (%d %d) -> (%d %d)\n",
+								olower_bound,
+								dupper_bound,
+								l2->start.x,l2->start.y,l2->end.x,l2->end.y,
+								l->start.x,l->start.y,l->end.x,l->end.y);
+
+						if (overlap){
+							int ret = adjustL2(l2,l,horizonvals);
+
+							if (ret == 0){ //adjust all lines derived from line(l)'s origin
+								l->origin->adjustRoutes(l->start.y,l->idx);
+							}else if(ret == 1){//correct this output port's offset
+								offset = l2->start.y;
+							}
+						}
+						if(overlap) printf("adjusted Horizon overlap![%d %d] l2 (%d %d) -> (%d %d) l (%d %d) -> (%d %d)\n",
+								olower_bound,
+								dupper_bound,
+								l2->start.x,l2->start.y,l2->end.x,l2->end.y,
+								l->start.x,l->start.y,l->end.x,l->end.y);
 					}
 				}
 			}while(overlap);

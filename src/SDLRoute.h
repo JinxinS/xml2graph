@@ -13,13 +13,13 @@ class SDL_Line;
 class SDL_Route {
 
 public:
-	const char* origin;
-	std::list<SDL_Line*> lines;
-	SDL_Color rcolor;
-	SDL_Route(const char* n):
-		origin(n),
-		lines(),
-		rcolor(){}
+//	const char* origin;
+//	std::list<SDL_Line*> lines;
+//	SDL_Color rcolor;
+//	SDL_Route(const char* n):
+//		origin(n),
+//		lines(),
+//		rcolor(){}
 	virtual ~SDL_Route();
 };
 
