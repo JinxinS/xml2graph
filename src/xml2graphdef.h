@@ -13,7 +13,7 @@ const int SCREEN_HEIGHT = 800;
 //const float swratio = 0.5;												// space-width ratio
 //const float shratio = 0.5;												// space-height ratio
 const int wsratio = 2;												// space-width ratio
-const int hsratio = 2;												// space-height ratio
+const int hsratio = 1;												// space-height ratio
 
 
 //struct position {

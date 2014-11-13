@@ -110,11 +110,12 @@ void DatapathGElement::compute(const int x, const int y,const int w,const int h,
 		deltatotal+=delta;
 	}
 
-
+	int yoffset = (h /hsratio)/2; 			//initial line corner position
+	int xoffset = (w /wsratio)/2; 			//initial line corner position
 	delta = w / (outputs.size() + 1);
 	deltatotal = delta ;
 	for(auto out = outputs.begin(); out != outputs.end(); ++out){
-		(out->second)->compute(x + deltatotal, y + h , gInFont);
+		(out->second)->compute(x + deltatotal, y + h, xoffset, yoffset, gInFont);
 		deltatotal+=delta;
 	}
 
