@@ -26,11 +26,10 @@ class DatapathGElementOutput {
 	char* origin;
 	std::set<SDL_Line*> routes;
 private:
-	int rand_number(int from, int to);
-	int adjustL1(SDL_Line* l1,SDL_Line*l2,std::set<int>& hvals);
-	int adjustL2(SDL_Line* l2,SDL_Line*l, std::set<int>& hvals);
-	int adjustL3(SDL_Line* l3,SDL_Line*l, std::set<int>& vvals,bool lr);
-	void adjustRoutes(int offset,int idx);
+	int adjustL1(SDL_Line* l1, std::set<SDL_Line*>& vlines);
+	int adjustL2(SDL_Line* l2, std::set<SDL_Line*>& hvals);
+	int adjustL3(SDL_Line* l3, std::set<SDL_Line*>& vlines, bool left);
+	int adjustL4(SDL_Line* l4,const int lowerbound, std::set<SDL_Line*>& hlines);
 	bool isOverLap(SDL_Line* l1,SDL_Line*l2);
 	void route(const SDL_Rect&,const SDL_Output& origin,const SDL_Rect&, const SDL_Arrow& destination,std::set<SDL_Line*>& cset);
 public:

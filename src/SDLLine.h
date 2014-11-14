@@ -20,6 +20,14 @@ public:
 	SDL_Line* prev;
 	SDL_Line* next;
 	DatapathGElementOutput* origin;
+	SDL_Line():
+		start(),
+		end(),
+		idx(),
+		prev(),
+		next(),
+		origin(){}
+
 	SDL_Line(SDL_Point p1,SDL_Point p2,int i,SDL_Line* prv,DatapathGElementOutput* o):
 		start(p1),
 		end(p2),
