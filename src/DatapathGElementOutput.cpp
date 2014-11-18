@@ -9,7 +9,6 @@
 #include "DatapathGElementInput.h"
 #include "DatapathGElement.h"
 #include "SDLLine.h"
-#include "SDLRoute.h"
 
 DatapathGElementOutput::DatapathGElementOutput(const char* n,DatapathGElement* p):
 name(n),
@@ -18,18 +17,10 @@ parent(p),
 pos(),
 xoffset(0),
 yoffset(0),
-origin(),
-routes()
-{
-	origin =  (char*)malloc(strlen(name)+strlen(parent->getName()) + 2);
-	strcpy(origin,parent->getName());
-	strcat(origin,".");
-	strcat(origin,name);
-}
+color({ 0, 0, 0, 0xFF })
+{}
 
-DatapathGElementOutput::~DatapathGElementOutput() {
-	free(origin);
-}
+DatapathGElementOutput::~DatapathGElementOutput() {}
 
 void DatapathGElementOutput::registerInput(DatapathGElementInput* in){
 	destationInputs.insert(in);
@@ -58,17 +49,19 @@ int DatapathGElementOutput::adjustL1(SDL_Line* l1, std::set<SDL_Line*>& vlines){
 	bool overlap = false;
 
 	do{
-
 		l1->end.y -= diff;
+		if(l1->end.y < l1->start.y)  break;
 		for(auto it = vlines.begin() ; it != vlines.end(); ++it){
 			SDL_Line* l_ = *it;
 			overlap = isOverLap(l1,l_);
 			if(overlap) break;
 		}
 		diff+= 3;
-	}while((overlap) && (l1->end.y > l1->start.y));
 
 
+	}while(overlap);
+
+	//printf("l1.end.y %d, l1.start.y %d \n",l1->end.y,l1->start.y);
 	if(!overlap) {
 		l1->next->start.y = l1->end.y;
 		l1->next->end.y   = l1->end.y;
@@ -79,9 +72,6 @@ int DatapathGElementOutput::adjustL1(SDL_Line* l1, std::set<SDL_Line*>& vlines){
 		printf("adjustL1 failed !\n");
 		exit(0);
 	}
-
-	//return 0 means the lines already existed is adjusted
-	//return 1 means the current line is adjusted
 }
 
 int DatapathGElementOutput::adjustL2(SDL_Line* l2, std::set<SDL_Line*>& hvals){
@@ -108,12 +98,10 @@ int DatapathGElementOutput::adjustL2(SDL_Line* l2, std::set<SDL_Line*>& hvals){
 	}
 	else{
 		printf("adjustL2 failed !\n");
-		//	exit(0);
+		exit(0);
 	}
-
-	//return 0 means the lines already existed is adjusted
-	//return 1 means the current line is adjusted
 }
+
 
 int DatapathGElementOutput::adjustL3(SDL_Line* l3, std::set<SDL_Line*>& vlines, bool left){
 
@@ -150,9 +138,6 @@ int DatapathGElementOutput::adjustL3(SDL_Line* l3, std::set<SDL_Line*>& vlines, 
 		printf("adjustL3 failed !\n");
 		exit(0);
 	}
-
-	//return 0 means the lines already existed is adjusted
-	//return 1 means the current line is adjusted
 }
 
 int DatapathGElementOutput::adjustL4(SDL_Line* l4, const int lowerbound, std::set<SDL_Line*>& hlines){
@@ -195,16 +180,13 @@ int DatapathGElementOutput::adjustL4(SDL_Line* l4, const int lowerbound, std::se
 			exit(0);
 		}
 	}
-
-	//return 0 means the lines already existed is adjusted
-	//return 1 means the current line is adjusted
 }
 
 bool DatapathGElementOutput::isOverLap(SDL_Line* l1,SDL_Line*l2){
 	if(l1->start.x == l2->start.x){
-		return ((l1->end.y >= l2->start.y)&&(l1->start.y < l2->end.y));
+		return ((l1->end.y > l2->start.y)&&(l1->start.y < l2->end.y));
 	}
-	if(l1->start.y == l2->start.y){
+	if(std::abs(l1->start.y - l2->start.y)<=1){
 		int l1minx = std::min(l1->start.x,l1->end.x);
 		int l1maxx = std::max(l1->start.x,l1->end.x);
 		int l2minx = std::min(l2->start.x,l2->end.x);
@@ -249,6 +231,7 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 		}
 	}
 
+	//SDL_Color c = { 0xFF, 0xA5, 0x00, 0xFF };
 	if(oy < dy){
 		if( (dupper_bound - olower_bound) >  free_col_space){
 			bool adjustLR = (ox > dx); //true on left adjust false on right adjust
@@ -259,11 +242,11 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 			SDL_Point c2 = { c2x, c1y};
 			SDL_Point c3 = { c2x, c3y};
 			SDL_Point c4 = { dx,  c3y};
-			SDL_Line* l1= new SDL_Line(origin.p, c1, 1, NULL, this);
-			SDL_Line* l2= new SDL_Line(c1, c2, 2, l1, this);
-			SDL_Line* l3= new SDL_Line(c2, c3, 3, l2, this);
-			SDL_Line* l4= new SDL_Line(c3, c4, 4, l3, this);
-			SDL_Line* l5= new SDL_Line(c4, destination.cp, 5, l4, this);
+			SDL_Line* l1= new SDL_Line(origin.p, c1, 1, color, NULL, this);
+			SDL_Line* l2= new SDL_Line(c1, c2, 2, color, l1, this);
+			SDL_Line* l3= new SDL_Line(c2, c3, 3, color, l2, this);
+			SDL_Line* l4= new SDL_Line(c3, c4, 4, color, l3,this);
+			SDL_Line* l5= new SDL_Line(c4, destination.cp, 5,color, l4, this);
 			l1->next = l2;
 			l2->next = l3;
 			l3->next = l4;
@@ -286,9 +269,9 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 
 			SDL_Point c1 = { ox, c1y};
 			SDL_Point c2 = { dx, c1y };
-			SDL_Line* l1= new SDL_Line(origin.p, c1,1,NULL,this);
-			SDL_Line* l2= new SDL_Line(c1, c2, 2,l1,this);
-			SDL_Line* l3= new SDL_Line(c2, destination.cp, 3,l2,this);
+			SDL_Line* l1= new SDL_Line(origin.p, c1,1,color, NULL,this);
+			SDL_Line* l2= new SDL_Line(c1, c2, 2,color, l1,this);
+			SDL_Line* l3= new SDL_Line(c2, destination.cp, 3,color, l2,this);
 			l1->next = l2;
 			l2->next = l3;
 
@@ -297,6 +280,13 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 
 			ret = adjustL2(l2,hlines);
 			if(ret == 1)yoffset = l2->start.y - l1->start.y ;
+
+
+			printf("L1 : (%d %d) -> (%d %d)  \n",l1->start.x,l1->start.y,l1->end.x,l1->end.y);
+			printf("L2 : (%d %d) -> (%d %d)  \n",l2->start.x,l2->start.y,l2->end.x,l2->end.y);
+			printf("L3 : (%d %d) -> (%d %d)  \n",l3->start.x,l3->start.y,l3->end.x,l3->end.y);
+
+
 			lines.insert(l1);
 			lines.insert(l2);
 			lines.insert(l3);
@@ -310,11 +300,11 @@ void DatapathGElementOutput::route(const SDL_Rect& outlineR1,const SDL_Output& o
 		SDL_Point c2 = {c2x, oy + 8};
 		SDL_Point c3 = {c2x, c3y };
 		SDL_Point c4 = {dx, c3y };
-		SDL_Line* l1= new SDL_Line(origin.p, c1, 1, NULL, this);
-		SDL_Line* l2= new SDL_Line(c1, c2, 2, l1, this);
-		SDL_Line* l3= new SDL_Line(c2, c3, 3, l2, this);
-		SDL_Line* l4= new SDL_Line(c3, c4, 4, l3, this);
-		SDL_Line* l5= new SDL_Line(c4, destination.cp, 5, l4, this);
+		SDL_Line* l1= new SDL_Line(origin.p, c1, 1, color,  NULL, this);
+		SDL_Line* l2= new SDL_Line(c1, c2, 2, color,  l1, this);
+		SDL_Line* l3= new SDL_Line(c2, c3, 3, color,  l2, this);
+		SDL_Line* l4= new SDL_Line(c3, c4, 4, color,  l3, this);
+		SDL_Line* l5= new SDL_Line(c4, destination.cp, 5, color,  l4, this);
 		l1->next = l2;
 		l2->next = l3;
 		l3->next = l4;
@@ -343,8 +333,8 @@ void DatapathGElementOutput::computeConnections(std::set<SDL_Line*>& lines){
 	for(std::set<DatapathGElementInput*>::const_iterator it = destationInputs.begin(); it!=destationInputs.end();++it){
 		const SDL_Rect&  outlineR2 = (*it)->getParent()->getOutlineRect();
 		//	if(!strcmp(this->getParent()->getName(),"tu_read"))
-//		printf("routing %s.%s  , %s.%s   \n",this->getParent()->getName(),this->getText(),
-//				(*it)->getParent()->getName(),(*it)->getText());
+		printf("routing %s.%s  , %s.%s   \n",this->getParent()->getName(),this->getText(),
+				(*it)->getParent()->getName(),(*it)->getText());
 		route(outlineR1,this->pos,outlineR2,(*it)->getArrowPosition(),lines);
 		//	if(!strcmp(this->getParent()->getName(),"tu_read")) printf("------------------------------------------------\n");
 	}

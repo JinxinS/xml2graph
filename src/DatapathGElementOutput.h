@@ -23,8 +23,7 @@ class DatapathGElementOutput {
 	SDL_Output pos;
 	int xoffset;
 	int yoffset;
-	char* origin;
-	std::set<SDL_Line*> routes;
+	SDL_Color color;
 private:
 	int adjustL1(SDL_Line* l1, std::set<SDL_Line*>& vlines);
 	int adjustL2(SDL_Line* l2, std::set<SDL_Line*>& hvals);

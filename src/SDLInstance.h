@@ -9,6 +9,7 @@
 #define SDLINSTANCE_H_
 #include <SDL2/SDL_ttf.h>
 #include <string>
+class LWindow;
 class LTexture;
 class SDL_Window;
 class SDL_Renderer;
@@ -16,7 +17,7 @@ class SDL_Texture;
 class DatapathGraphInfo;
 class SDLInstance {
 	//The window we'll be rendering to
-	SDL_Window* gWindow;
+	LWindow* gWindow;
 
 	//The window renderer
 	SDL_Renderer* gRenderer;

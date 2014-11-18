@@ -14,11 +14,13 @@
 #include <sstream>
 #include <cmath>
 #include "LTexture.h"
+#include "LWindow.h"
 #include "xml2graphdef.h"
 #include "DatapathGraphInfo.h"
 #include "SDLLine.h"
+
 SDLInstance::SDLInstance()
-:gWindow(),
+:gWindow(new LWindow()),
  gRenderer(),
  gFont(),
  gInputFont(),
@@ -51,8 +53,7 @@ bool SDLInstance::init(const char* title) {
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if( gWindow == NULL )
+		if(!gWindow->init(title))
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
@@ -60,7 +61,7 @@ bool SDLInstance::init(const char* title) {
 		else
 		{
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			gRenderer = gWindow->createRenderer();
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -206,6 +207,7 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 			{
 				quit = true;
 			}
+			gWindow->handleEvent(e);
 		}
 
 		//Clear screen
@@ -226,9 +228,9 @@ bool SDLInstance::draw(DatapathGraphInfo* g){
 		}
 
 		//Render Connections
-		SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 		for(auto i = lines.begin() ; i != lines.end(); ++i){
 			SDL_Line* l = (*i);
+			SDL_SetRenderDrawColor( gRenderer, l->color.r, l->color.g, l->color.b, l->color.a );
 			SDL_RenderDrawLine( gRenderer,l->start.x, l->start.y,l->end.x,l->end.y );
 
 		}
@@ -273,7 +275,8 @@ void SDLInstance::close()
 
 	//Destroy window
 	SDL_DestroyRenderer( gRenderer );
-	SDL_DestroyWindow( gWindow );
+	gWindow->free();
+	delete gWindow;
 	gWindow = NULL;
 	gRenderer = NULL;
 

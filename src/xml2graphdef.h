@@ -8,8 +8,8 @@
 #ifndef XML2GRAPHDEF_H_
 #define XML2GRAPHDEF_H_
 #include <SDL2/SDL.h>
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_WIDTH = 1440;
+const int SCREEN_HEIGHT = 900;
 //const float swratio = 0.5;												// space-width ratio
 //const float shratio = 0.5;												// space-height ratio
 const int wsratio = 2;												// space-width ratio

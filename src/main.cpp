@@ -15,6 +15,7 @@ char* parseArguments(int argc, const char* argv[] );
 void printUsage(const char *progName);
 int main( int argc,const char* args[] )
 {
+	int i;
 
 	const char* fname = parseArguments(argc, args);
 	SDLInstance sdlInstance;

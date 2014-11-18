@@ -17,21 +17,25 @@ public:
 	SDL_Point start;
 	SDL_Point end;
 	int idx;
+	SDL_Color color;
 	SDL_Line* prev;
 	SDL_Line* next;
 	DatapathGElementOutput* origin;
+
 	SDL_Line():
 		start(),
 		end(),
 		idx(),
+		color(),
 		prev(),
 		next(),
 		origin(){}
 
-	SDL_Line(SDL_Point p1,SDL_Point p2,int i,SDL_Line* prv,DatapathGElementOutput* o):
+	SDL_Line(SDL_Point p1,SDL_Point p2,int i,SDL_Color c,SDL_Line* prv,DatapathGElementOutput* o):
 		start(p1),
 		end(p2),
 		idx(i),
+		color(c),
 		prev(prv),
 		next(),
 		origin(o){}
